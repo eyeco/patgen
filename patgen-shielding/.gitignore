@@ -1,0 +1,12 @@
+prj/int/
+prj/.vs/
+*.ini
+*.svg
+**/*.exe
+**/*.pdb
+**/*.cap
+**/*.mat
+**/*.ilk
+**/*.iobj
+**/*.ipdb
+config.json
