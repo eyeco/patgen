@@ -10,13 +10,14 @@
 
 
 #define MIN_JUMP_FACTOR		0.20f
-#define CONNECTOR_LENGTH	0.05f
+#define CONNECTOR_LENGTH	0.01f
 
 namespace TextileUX
 {
-	Trace::Trace( float jumpSize, const glm::vec4 &color ) :
+	Trace::Trace( float jumpSize, float minJumpSize, const glm::vec4 &color ) :
 		_color( color ),
 		_jumpSize( jumpSize ),
+		_minJumpSize( minJumpSize < 0.00000001 ? jumpSize * MIN_JUMP_FACTOR : minJumpSize ),
 		_runLength( 0.0f ),
 		_vbPath( "path" ),
 		_vbStitches( "stitches" )
@@ -69,7 +70,7 @@ namespace TextileUX
 
 		//for all stitches that are too close remove the earlier one
 		// minimum jump size is 25% of targeted jump size
-		float mj2 = _jumpSize * MIN_JUMP_FACTOR * _jumpSize * MIN_JUMP_FACTOR;
+		float mj2 = _minJumpSize * _minJumpSize;
 		std::vector<glm::vec3> temp;
 		for( int i = 0; i < _stitches.size() - 1; i++ )
 		{
@@ -168,9 +169,9 @@ namespace TextileUX
 	glm::vec4 Pattern::Color = glm::vec4( 1, 1, 0, 1 );
 
 
-	Pattern::Pattern( const std::string &name, float jumpSize ) :
+	Pattern::Pattern( const std::string &name, float jumpSize, float minJumpSize ) :
 		_name( name ),
-		_trace( jumpSize, Color )
+		_trace( jumpSize, minJumpSize, Color )
 	{}
 
 	Pattern::~Pattern()
@@ -232,19 +233,22 @@ namespace TextileUX
 			v = glm::vec3( cosA * v.x - sinA * v.y, sinA * v.x + cosA * v.y, 0 );
 	}
 
-	void Pattern::rotateCW()
+	void Pattern::rotate90CW()
 	{
-		float cosA = 0;
-		float sinA = -1;
-
 		for( glm::vec3 &v : _trace.getVerts() )
 			v = glm::vec3( v.y, -v.x, 0 );
 	}
 
-	void Pattern::rotateCCW()
+	void Pattern::rotate90CCW()
 	{
 		for( glm::vec3 &v : _trace.getVerts() )
 			v = glm::vec3( -v.y, v.x, 0 );
+	}
+
+	void Pattern::rotate180()
+	{
+		for( glm::vec3 &v : _trace.getVerts() )
+			v = glm::vec3( -v.x, -v.y, 0 );
 	}
 
 	void Pattern::draw()
@@ -268,7 +272,7 @@ namespace TextileUX
 		if( !fp )
 			return false;
 
-		float scale = 100.0f;
+		float scale = 1000.0f;
 		int canvasWidth = 300;
 		int canvasHeight = 200;
 		float canvasCenterX = canvasWidth / 2.0f;
@@ -314,8 +318,8 @@ namespace TextileUX
 
 
 
-	BoustrophedonCircle::BoustrophedonCircle( float diameter, float dist, float jumpSize ) :
-		Pattern( "boustrophedon-circle", jumpSize ),
+	BoustrophedonCircle::BoustrophedonCircle( float diameter, float dist, float jumpSize, float minJumpSize ) :
+		Pattern( "boustrophedon-circle", jumpSize, minJumpSize ),
 		_diameter( diameter ),
 		_dist( dist ),
 		_rMax( 0.0f )
@@ -338,7 +342,7 @@ namespace TextileUX
 	{
 		clear();
 
-		std::vector<glm::vec3> temp;
+		std::list<glm::vec3> temp;
 
 		float r = _diameter / 2.0f;
 		float jump = _trace.getJumpSize();
@@ -410,6 +414,8 @@ namespace TextileUX
 			dir *= -1;
 		}
 
+		//TODO: add final arc to reach p(0,-r)
+
 		_rMax = 0;
 		for( auto &p : temp )
 		{
@@ -419,10 +425,12 @@ namespace TextileUX
 		}
 		_rMax = sqrt( _rMax );
 		
-		temp.push_back( glm::vec3( 0, -( r + CONNECTOR_LENGTH ), 0 ) );
+		temp.push_front( glm::vec3( 0, r + CONNECTOR_LENGTH, 0 ) );
 
 		for( auto &p : temp )
 			_trace.insertBack( p );
+
+		rotate180();
 
 		return rebuild();
 	}
@@ -431,7 +439,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-D%.03f-d%.03f-j%.03f", getName().c_str(), _diameter, _dist, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-D%.03f-d%.04f-j%.03f", getName().c_str(), _diameter, _dist, _trace.getJumpSize() );
 
 		return std::string( tempStr );
 	}
@@ -440,11 +448,12 @@ namespace TextileUX
 
 
 
-	SpiralCircle::SpiralCircle( float diameter, float dist, float jumpSize, float innerDiameter ) :
-		Pattern( "spiral-circle", jumpSize ),
+	SpiralCircle::SpiralCircle( float diameter, float dist, float outerJumpSize, float innerJumpSize, float innerDiameter, float minJumpSize ) :
+		Pattern( "spiral-circle", outerJumpSize, minJumpSize ),
 		_diameter( diameter ),
 		_dist( dist ),
-		_innerDiameter( innerDiameter )
+		_innerDiameter( innerDiameter ),
+		_innerJumpSize( innerJumpSize )
 	{}
 	
 	SpiralCircle::~SpiralCircle()
@@ -466,6 +475,9 @@ namespace TextileUX
 		if( _innerDiameter > _diameter ) 
 			return false;
 
+		if( _innerJumpSize > _trace.getJumpSize() )
+			return false;
+
 		clear();
 
 		std::list<glm::vec3> temp;
@@ -475,7 +487,9 @@ namespace TextileUX
 
 		float r0 = _diameter / 2.0f;
 		float r1 = _innerDiameter / 2.0f;
-		float jump = _trace.getJumpSize();
+		float j0 = _trace.getJumpSize();
+		float j1 = _innerJumpSize;
+		float jump = 0;
 
 		float a = 0;
 		float r = r0;
@@ -491,6 +505,9 @@ namespace TextileUX
 			temp.push_back( glm::vec3( x, y, 0 ) );
 
 			float d = hypot( x, y );
+
+			float p = ( r - r1 ) / ( r0 - r1 );	//progress [0 1], moving from outer to inner radius
+			jump = j1 * ( 1 - p ) + j0 * p;		//linear interpolation of jump size based on progress
 
 			// approximate increment angle alpha for wanted segment length s with circle equation
 			float b = 2.0f * asin( jump / ( 2.0f * d ) );
@@ -515,7 +532,7 @@ namespace TextileUX
 		for( auto &p : temp )
 			_trace.insertBack( p );
 
-		rotateCW();
+		rotate90CW();
 
 		return rebuild();
 	}
@@ -524,7 +541,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-D%.03f-d%.03f-ID%.03f-j%.03f", getName().c_str(), _diameter, _dist, _innerDiameter, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-D%.03f-d%.04f-ID%.03f-j[%.03f-%.03f]", getName().c_str(), _diameter, _dist, _innerDiameter, _trace.getJumpSize(), _innerJumpSize );
 
 		return std::string( tempStr );
 	}
@@ -533,8 +550,8 @@ namespace TextileUX
 
 
 
-	BoustrophedonQuadOrtho::BoustrophedonQuadOrtho( float width, float dist, float jumpSize ) :
-		Pattern( "boustrophedon-quad-ortho", jumpSize ),
+	BoustrophedonQuadOrtho::BoustrophedonQuadOrtho( float width, float dist, float jumpSize, float minJumpSize ) :
+		Pattern( "boustrophedon-quad-ortho", jumpSize, minJumpSize ),
 		_width( width ),
 		_dist( dist )
 	{}
@@ -565,7 +582,9 @@ namespace TextileUX
 
 		int dir = 1;
 
-		while( y > -halfWidth )
+		int lines = round( _width / _dist ) + 1;
+
+		for( int i = 0; i < lines; i++ )
 		{
 			float x1 = halfWidth * dir;
 			float x0 = -x1;
@@ -590,7 +609,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-W%.03f-d%.03f-j%.03f", getName().c_str(), _width, _dist, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-W%.03f-d%.04f-j%.03f", getName().c_str(), _width, _dist, _trace.getJumpSize() );
 
 		return std::string( tempStr );
 	}
@@ -598,8 +617,8 @@ namespace TextileUX
 
 
 
-	BoustrophedonQuadDiag::BoustrophedonQuadDiag( float width, float dist, float jumpSize ) :
-		Pattern( "boustrophedon-quad-diag", jumpSize ),
+	BoustrophedonQuadDiag::BoustrophedonQuadDiag( float width, float dist, float jumpSize, float minJumpSize ) :
+		Pattern( "boustrophedon-quad-diag", jumpSize, minJumpSize ),
 		_width( width ),
 		_dist( dist )
 	{}
@@ -663,7 +682,94 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-W%.03f-d%.03f-j%.03f", getName().c_str(), _width, _dist, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-W%.03f-d%.04f-j%.03f", getName().c_str(), _width, _dist, _trace.getJumpSize() );
+
+		return std::string( tempStr );
+	}
+
+
+
+
+
+	BoustrophedonQuadDouble::BoustrophedonQuadDouble( float width, float dist, int jumpMult, float minJumpSize ) :
+		Pattern( "boustrophedon-quad-double", dist * jumpMult, minJumpSize ),
+		_width( width ),
+		_dist( dist )
+	{}
+
+	BoustrophedonQuadDouble::~BoustrophedonQuadDouble()
+	{}
+
+	void BoustrophedonQuadDouble::updateSizeString()
+	{
+		auto &stitches = _trace.getStitches();
+
+		std::stringstream sstr;
+		sstr << _width << " x " << _width;
+
+		_sizeString = sstr.str();
+	}
+
+	bool BoustrophedonQuadDouble::build()
+	{
+		clear();
+
+		std::vector<glm::vec3> temp;
+
+		float halfWidth = _width * 0.5f;
+
+		//float x = -halfWidth;
+		float y = halfWidth - _dist * 0.5f;
+
+		int dir = 1;
+
+		int lines = round( _width / _dist );
+
+		for( int i = 0; i < lines; i++ )
+		{
+			float x1 = halfWidth * dir;
+			float x0 = -x1;
+
+			temp.push_back( glm::vec3( x0, y, 0 ) );
+			temp.push_back( glm::vec3( x1, y, 0 ) );
+
+			dir *= -1;
+
+			y -= _dist;
+		}
+
+		int xDir = dir;
+		float x = -( halfWidth - _dist * 0.5f ) * xDir;
+		//y = -halfWidth;
+
+		dir = 1;
+
+		for( int i = 0; i < lines; i++ )
+		{
+			float y1 = halfWidth * dir;
+			float y0 = -y1;
+
+			temp.push_back( glm::vec3( x, y0, 0 ) );
+			temp.push_back( glm::vec3( x, y1, 0 ) );
+
+			dir *= -1;
+
+			x += _dist * xDir;
+		}
+
+		temp.push_back( glm::vec3( x - _dist * xDir, -( halfWidth + CONNECTOR_LENGTH ), 0 ) );
+
+		for( auto &p : temp )
+			_trace.insertBack( p );
+
+		return rebuild();
+	}
+
+	std::string BoustrophedonQuadDouble::getFullName() const
+	{
+		char tempStr[128];
+
+		sprintf( tempStr, "%s-W%.03f-d%.04f-j%.03f", getName().c_str(), _width, _dist, _trace.getJumpSize() );
 
 		return std::string( tempStr );
 	}

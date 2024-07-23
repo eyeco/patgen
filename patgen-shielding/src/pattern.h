@@ -14,6 +14,8 @@ namespace TextileUX
 		std::vector<glm::vec3> _stitches;	//actual stitches, resulting from resampling, e.g. due to maximum jump size supported by machine
 
 		float _jumpSize;
+		float _minJumpSize;
+
 		float _runLength;
 
 		VertexBuffer _vbPath;
@@ -23,7 +25,7 @@ namespace TextileUX
 		bool rebuildVBOs();
 
 	public:
-		Trace( float jumpSize, const glm::vec4 &color );
+		Trace( float jumpSize, float minJumpSize, const glm::vec4 &color );
 
 		void draw();
 
@@ -71,7 +73,7 @@ namespace TextileUX
 
 		static glm::vec4 Color;
 
-		explicit Pattern( const std::string &name, float jumpSize );
+		explicit Pattern( const std::string &name, float jumpSize, float minJumpSize = 0 );
 		virtual ~Pattern();
 
 		virtual bool build() = 0;
@@ -93,8 +95,9 @@ namespace TextileUX
 		void translate( const glm::vec3 &t );
 		void rotate( float rad );
 
-		void rotateCW();
-		void rotateCCW();
+		void rotate90CW();
+		void rotate90CCW();
+		void rotate180();
 	};
 
 	class BoustrophedonCircle : public Pattern
@@ -107,7 +110,7 @@ namespace TextileUX
 		virtual void updateSizeString();
 
 	public:
-		BoustrophedonCircle( float diameter, float dist, float jumpSize );
+		BoustrophedonCircle( float diameter, float dist, float jumpSize, float minJumpSize = 0 );
 		virtual ~BoustrophedonCircle();
 
 		virtual bool build();
@@ -121,13 +124,15 @@ namespace TextileUX
 		float _dist;
 		float _innerDiameter;
 
+		float _innerJumpSize;
+
 		glm::vec3 _first;
 		glm::vec3 _last;
 
 		virtual void updateSizeString();
 
 	public:
-		SpiralCircle( float diameter, float dist, float jumpSize, float innerDiameter = 0 );
+		SpiralCircle( float diameter, float dist, float outerJumpSize, float innerJumpSize, float innerDiameter = 0, float minJumpSize = 0 );
 		virtual ~SpiralCircle();
 
 		virtual bool build();
@@ -143,7 +148,7 @@ namespace TextileUX
 		virtual void updateSizeString();
 
 	public:
-		BoustrophedonQuadOrtho( float width, float dist, float jumpSize );
+		BoustrophedonQuadOrtho( float width, float dist, float jumpSize, float minJumpSize = 0 );
 		virtual ~BoustrophedonQuadOrtho();
 
 		virtual bool build();
@@ -159,8 +164,24 @@ namespace TextileUX
 		virtual void updateSizeString();
 
 	public:
-		BoustrophedonQuadDiag( float width, float dist, float jumpSize );
+		BoustrophedonQuadDiag( float width, float dist, float jumpSize, float minJumpSize = 0 );
 		virtual ~BoustrophedonQuadDiag();
+
+		virtual bool build();
+		virtual std::string getFullName() const;
+	};
+
+	class BoustrophedonQuadDouble : public Pattern
+	{
+	private:
+		float _width;
+		float _dist;
+
+		virtual void updateSizeString();
+
+	public:
+		BoustrophedonQuadDouble( float width, float dist, int jumpMult, float minJumpSize = 0 );
+		virtual ~BoustrophedonQuadDouble();
 
 		virtual bool build();
 		virtual std::string getFullName() const;

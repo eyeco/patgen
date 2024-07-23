@@ -802,25 +802,50 @@ int main( int argc, char **argv )
 		{
 			initGL( argc, argv );
 
-			pattern = new SpiralCircle( 0.2f, 0.02f, 0.01f, 0.05f );
+			//pattern = new SpiralCircle( 0.018f, 0.0005f, 0.004f, 0.002f, 0.003f );
+			//pattern->build();
+			//pattern->save();
+			//safeDelete( pattern );
+
+			pattern = new BoustrophedonCircle( 0.018f, 0.0005f, 0.005f, 0.0001f );
 			pattern->build();
 			//pattern->save();
 			//safeDelete( pattern );
 
-			//pattern = new BoustrophedonCircle( 0.2f, 0.02f, 0.01f );
+			//pattern = new BoustrophedonQuadOrtho( 0.004f, 0.0005f, 0.005f, 0.00001 );
 			//pattern->build();
 			//pattern->save();
 			//safeDelete( pattern );
 
-			//pattern = new BoustrophedonQuadOrtho( 0.2f, 0.02f, 0.01f );
+			//pattern = new BoustrophedonQuadDiag( 0.036f, 0.002f, 0.005f, 0.00001 );
 			//pattern->build();
 			//pattern->save();
 			//safeDelete( pattern );
 
-			//pattern = new BoustrophedonQuadDiag( 0.2f, 0.01f, 0.01f );
+			//pattern = new BoustrophedonQuadDouble( 0.036f, 0.002f, 1, 0.00001 );
+			////pattern = new BoustrophedonQuadDouble( 0.036f, 0.001f, 2, 0.00001 );
 			//pattern->build();
 			//pattern->save();
 			//safeDelete( pattern );
+
+			/*float w[] = { 0.006f, 0.012f, 0.018f };
+			float dist[] = { 0.0005f, 0.001f, 0.002f };
+			for( int i = 0; i < 3; i++ )
+			{
+				pattern = new BoustrophedonQuadOrtho( w[i], dist[1], 0.005f, 0.00001 );
+				pattern->build();
+				pattern->save();
+				safeDelete( pattern );
+			}
+			for( int i = 0; i < 3; i++ )
+			{
+				pattern = new BoustrophedonQuadOrtho( w[1], dist[i], 0.005f, 0.00001 );
+				pattern->build();
+				pattern->save();
+				safeDelete( pattern );
+			}
+
+			return EXIT_SUCCESS;*/
 
 #ifdef USE_GLUT
 			glutMainLoop();
