@@ -807,8 +807,8 @@ int main( int argc, char **argv )
 			//pattern->save();
 			//safeDelete( pattern );
 
-			pattern = new BoustrophedonCircle( 0.018f, 0.0005f, 0.005f, 0.0001f );
-			pattern->build();
+			//pattern = new BoustrophedonCircle( 0.018f, 0.0005f, 0.005f, 0.0001f );
+			//pattern->build();
 			//pattern->save();
 			//safeDelete( pattern );
 
@@ -828,7 +828,8 @@ int main( int argc, char **argv )
 			//pattern->save();
 			//safeDelete( pattern );
 
-			/*float w[] = { 0.006f, 0.012f, 0.018f };
+			/*
+			float w[] = { 0.012f, 0.015f, 0.017f };
 			float dist[] = { 0.0005f, 0.001f, 0.002f };
 			for( int i = 0; i < 3; i++ )
 			{
@@ -844,8 +845,24 @@ int main( int argc, char **argv )
 				pattern->save();
 				safeDelete( pattern );
 			}
+			pattern = new BoustrophedonQuadDiag( w[1], dist[1], 0.005f, 0.00001 );
+			pattern->build();
+			pattern->save();
+			safeDelete( pattern );
 
-			return EXIT_SUCCESS;*/
+			pattern = new BoustrophedonQuadDouble( w[1], dist[1], 2, 0.00001 );
+			pattern->build();
+			pattern->save();
+			safeDelete( pattern );
+
+			pattern = new BoustrophedonQuadDouble( 0.016, 0.002, 1, 0.00001 );
+			pattern->build();
+			pattern->save();
+			safeDelete( pattern );
+			*/
+
+
+			//return EXIT_SUCCESS;
 
 #ifdef USE_GLUT
 			glutMainLoop();

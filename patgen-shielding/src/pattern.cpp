@@ -757,7 +757,7 @@ namespace TextileUX
 			x += _dist * xDir;
 		}
 
-		temp.push_back( glm::vec3( x - _dist * xDir, -( halfWidth + CONNECTOR_LENGTH ), 0 ) );
+		temp.push_back( glm::vec3( x - _dist * xDir, -( halfWidth + CONNECTOR_LENGTH ) * dir, 0 ) );
 
 		for( auto &p : temp )
 			_trace.insertBack( p );
