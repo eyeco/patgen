@@ -79,7 +79,7 @@ Trackball2D trackball( zero(), 0.0f, -2.5 );
 
 std::string statusString( "ready" );
 
-float scale = DEFAULT_SCALE;
+Unit unit = U_MM;
 
 namespace TextileUX
 {
@@ -593,7 +593,7 @@ void display()
 						pattern = new SpiralCircle();
 						if( pattern->build( params ) )
 						{
-							pattern->setScale( scale );
+							pattern->setUnit( unit );
 							statusString = "created SpiralCircle";
 						}
 						else
@@ -610,7 +610,7 @@ void display()
 						pattern = new BoustrophedonCircle();
 						if( pattern->build( params ) )
 						{
-							pattern->setScale( scale );
+							pattern->setUnit( unit );
 							statusString = "created BoustrophedonCicle";
 						}
 						else
@@ -627,7 +627,7 @@ void display()
 						pattern = new BoustrophedonQuadOrtho();
 						if( pattern->build( params ) )
 						{
-							pattern->setScale( scale );
+							pattern->setUnit( unit );
 							statusString = "created BoustrophedonQuadOrtho";
 						}
 						else
@@ -644,7 +644,7 @@ void display()
 						pattern = new BoustrophedonQuadDiag();
 						if( pattern->build( params ) )
 						{
-							pattern->setScale( scale );
+							pattern->setUnit( unit );
 							statusString = "created BoustrophedonQuadDiag";
 						}
 						else
@@ -661,7 +661,7 @@ void display()
 						pattern = new BoustrophedonQuadDouble();
 						if( pattern->build( params ) )
 						{
-							pattern->setScale( scale );
+							pattern->setUnit( unit );
 							statusString = "created BoustrophedonQuadDouble";
 						}
 						else
@@ -685,23 +685,23 @@ void display()
 
 			if( ImGui::BeginMenu( "Scale" ) )
 			{
-				if( ImGui::RadioButton( "m", ( scale == 1 ) ) )
+				if( ImGui::RadioButton( "m", ( unit == U_M ) ) )
 				{
-					scale = 1;
+					unit = U_M;
 					if( pattern )
-						pattern->setScale( scale );
+						pattern->setUnit( unit );
 				}
-				if( ImGui::RadioButton( "cm", ( scale == 100 ) ) )
+				if( ImGui::RadioButton( "cm", ( unit == U_CM ) ) )
 				{
-					scale = 100;
+					unit = U_CM;
 					if( pattern )
-						pattern->setScale( scale );
+						pattern->setUnit( unit );
 				}
-				if( ImGui::RadioButton( "mm", ( scale == 1000 ) ) )
+				if( ImGui::RadioButton( "mm", ( unit == U_MM ) ) )
 				{
-					scale = 1000;
+					unit = U_MM;
 					if( pattern )
-						pattern->setScale( scale );
+						pattern->setUnit( unit );
 				}
 
 

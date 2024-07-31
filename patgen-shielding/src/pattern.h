@@ -3,8 +3,6 @@
 #include <vector>
 #include <vertexBuffer.h>
 
-#define DEFAULT_SCALE	1000
-
 namespace TextileUX
 {
 	class Trace
@@ -83,7 +81,7 @@ namespace TextileUX
 
 		std::string _sizeString;
 
-		float _scale;
+		Unit _unit;
 
 		virtual void clear();
 
@@ -100,8 +98,8 @@ namespace TextileUX
 		Pattern( const std::string &name );
 		virtual ~Pattern();
 
-		void setScale( float scale ) { _scale = scale; }
-		float getScale() const { return _scale; }
+		void setUnit( Unit unit) { _unit = unit; }
+		Unit getUnit() const { return _unit; }
 
 		virtual bool build( const PatternParamsBase *params );
 		virtual std::string getFullName() const = 0;

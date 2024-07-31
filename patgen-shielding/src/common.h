@@ -53,6 +53,15 @@ namespace ImGui
 
 namespace TextileUX
 {
+	enum Unit
+	{
+		U_MM,
+		U_CM,
+		U_M,
+
+		U_COUNT
+	};
+
 	template<typename T>
 	inline void safeDelete( T* &ptr )
 	{

@@ -241,7 +241,7 @@ namespace TextileUX
 	Pattern::Pattern( const std::string &name ) :
 		_name( name ),
 		_trace( Color ),
-		_scale( DEFAULT_SCALE )
+		_unit( U_COUNT )
 	{}
 
 	Pattern::~Pattern()
@@ -338,6 +338,24 @@ namespace TextileUX
 
 	bool Pattern::save()
 	{
+		float scale = 0.0f;
+
+		switch( _unit )
+		{
+		case U_M:
+			scale = 1000;
+			break;
+		case U_CM:
+			scale = 10;
+			break;
+		case U_MM:
+			scale = 1;
+			break;
+		default:
+			std::cerr << "ERROR: unit not set" << std::endl;
+			return false;
+		}
+
 		char tempStr[128];
 		sprintf( tempStr, "%s.svg", getFullName().c_str() );
 
@@ -345,8 +363,9 @@ namespace TextileUX
 		if( !fp )
 			return false;
 
-		int canvasWidth = 300 * _scale / 1000;
-		int canvasHeight = 200 * _scale / 1000;
+		//embroidery frame size is 30x20 cm
+		int canvasWidth = 300;
+		int canvasHeight = 200;
 		float canvasCenterX = canvasWidth / 2.0f;
 		float canvasCenterY = canvasHeight / 2.0f;
 
@@ -367,8 +386,8 @@ namespace TextileUX
 			sstr.precision( 5 );
 			for( int i = 0; i < stitches.size(); i++ )
 			{
-				float x = canvasCenterX + stitches[i].x * _scale;
-				float y = canvasCenterY - stitches[i].y * _scale;
+				float x = canvasCenterX + stitches[i].x * scale;
+				float y = canvasCenterY - stitches[i].y * scale;
 
 				sstr << ( i ? " " : "" ) << x << "," << y;
 			}
