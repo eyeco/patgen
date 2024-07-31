@@ -46,6 +46,9 @@
 
 using namespace TextileUX;
 
+#define KEY_RETURN	13
+#define KEY_ESC		27
+
 
 #ifdef USE_GLUT
 int glutWindowID = -1;
@@ -68,10 +71,15 @@ glm::vec4 clearColor;
 
 std::vector<VertexBuffer*> grids( 3 );
 
+PatternParamsBase *params = nullptr;
 Pattern *pattern = nullptr;
 int stitchProgress = 0;
 
 Trackball2D trackball( zero(), 0.0f, -2.5 );
+
+std::string statusString( "ready" );
+
+float scale = DEFAULT_SCALE;
 
 namespace TextileUX
 {
@@ -160,6 +168,25 @@ bool uiActive = true;
 //stupid ImGui is stupid. have to use flag.
 bool imGuiInitialized = false;
 
+void save()
+{
+	if( pattern )
+	{
+		if( pattern->save() )
+			std::cout << "successfully saved pattern to disc" << std::endl;
+		else
+			std::cerr << "failed to save pattern to disc" << std::endl;
+	}
+}
+
+void clearPattern()
+{
+	safeDelete( params );
+	safeDelete( pattern );
+
+	stitchProgress = 0;
+}
+
 
 void displayQuad( float left, float bottom, float right, float top )
 {
@@ -211,42 +238,54 @@ void displayGraph( const std::vector<float> &values, unsigned int maxValues )//,
 
 void motion( int x, int y )
 {
+	bool imGuiHandled = ( ImGui::GetIO().WantCaptureMouse && uiActive );
+
 #ifdef USE_GLUT
 	if( uiActive )
 		ImGui_ImplFreeGLUT_MotionFunc( x, y );
 #endif
 
-	trackball.onMotion( x, y );
+	if( !imGuiHandled )
+		trackball.onMotion( x, y );
 }
 
 void passiveMotion( int x, int y )
 {
+	bool imGuiHandled = ( ImGui::GetIO().WantCaptureMouse && uiActive );
+
 #ifdef USE_GLUT
 	if( uiActive )
 		ImGui_ImplFreeGLUT_MotionFunc( x, y );
 #endif
 
-	trackball.onPassiveMotion( x, y );
+	if( !imGuiHandled )
+		trackball.onPassiveMotion( x, y );
 }
 
 void mouse( int button, int state, int x, int y )
 {
+	bool imGuiHandled = ( ImGui::GetIO().WantCaptureMouse && uiActive );
+
 #ifdef USE_GLUT
 	if( uiActive )
 		ImGui_ImplFreeGLUT_MouseFunc( button, state, x, y );
 #endif
 
-	trackball.onMouse( button, state, x, y );
+	if( !imGuiHandled )
+		trackball.onMouse( button, state, x, y );
 }
 
 void mouseWheel( int wheel, int direction, int x, int y )
 {
+	bool imGuiHandled = ( ImGui::GetIO().WantCaptureMouse && uiActive );
+
 #ifdef USE_GLUT
 	if( uiActive )
 		ImGui_ImplFreeGLUT_MouseWheelFunc( wheel, direction, x, y );
 #endif
 
-	trackball.onMouseWheel( wheel, direction, x, y );
+	if( !imGuiHandled )
+		trackball.onMouseWheel( wheel, direction, x, y );
 }
 
 #ifdef USE_GLUT
@@ -255,8 +294,11 @@ void keyDown( unsigned char key, int x, int y )
 void keyDown( int key )
 #endif
 {
-	if( trackball.onKeyDown( key, x, y ) )
-		return;
+	bool imGuiHandled = ( ImGui::GetIO().WantCaptureKeyboard && uiActive );
+
+	if( !imGuiHandled )
+		if( trackball.onKeyDown( key, x, y ) )
+			return;
 
 #ifdef USE_GLUT
 	if( uiActive )
@@ -268,10 +310,10 @@ void keyDown( int key )
 		//uiActive = !uiActive;
 		//std::cout << ( uiActive ? "activated" : "deactivated" ) << " UI" << std::endl;
 		break;
-	case 13:
+	case KEY_RETURN:
 		stitchProgress = 0;
 		break;
-	case 27:
+	case KEY_ESC:
 		quit = true;
 		break;
 	}
@@ -305,8 +347,11 @@ void keyDown( int key )
 
 void keyUp( unsigned char key, int x, int y )
 {
-	if( trackball.onKeyUp( key, x, y ) )
-		return;
+	bool imGuiHandled = ( ImGui::GetIO().WantCaptureKeyboard && uiActive );
+
+	if( !imGuiHandled )
+		if( trackball.onKeyUp( key, x, y ) )
+			return;
 
 #ifdef USE_GLUT
 	if( uiActive )
@@ -316,8 +361,11 @@ void keyUp( unsigned char key, int x, int y )
 
 void specialDown( int key, int x, int y )
 {
-	if( trackball.onSpecialDown( key, x, y ) )
-		return;
+	bool imGuiHandled = ( ImGui::GetIO().WantCaptureKeyboard && uiActive );
+
+	if( !imGuiHandled )
+		if( trackball.onSpecialDown( key, x, y ) )
+			return;
 
 #ifdef USE_GLUT
 	if( uiActive )
@@ -326,13 +374,7 @@ void specialDown( int key, int x, int y )
 	switch( key )
 	{
 	case GLUT_KEY_F2:
-		if( pattern )
-		{
-			if( pattern->save() )
-				std::cout << "successfully saved pattern to disc" << std::endl;
-			else
-				std::cerr << "failed to save pattern to disc" << std::endl;
-		}
+		save();
 		break;
 	case GLUT_KEY_LEFT:
 		if( stitchProgress )
@@ -347,8 +389,11 @@ void specialDown( int key, int x, int y )
 
 void specialUp( int key, int x, int y )
 {
-	if( trackball.onSpecialUp( key, x, y ) )
-		return;
+	bool imGuiHandled = ( ImGui::GetIO().WantCaptureKeyboard && uiActive );
+
+	if( !imGuiHandled )
+		if( trackball.onSpecialUp( key, x, y ) )
+			return;
 
 #ifdef USE_GLUT
 	if( uiActive )
@@ -463,23 +508,6 @@ void display()
 
 	double dt = diff.count();
 
-	if( uiActive )
-	{
-		ImGui_ImplOpenGL2_NewFrame();
-
-		ImGuiIO& io = ImGui::GetIO();
-		io.DisplaySize = ImVec2( (float) windowWidth, (float) windowHeight );
-		if( io.DeltaTime < std::numeric_limits<float>::epsilon() )
-			io.DeltaTime = (float) dt;
-		ImGui::NewFrame();
-
-		//TODO: draw GUI here
-
-		ImGui::Render();
-
-		ImGui_ImplOpenGL2_RenderDrawData( ImGui::GetDrawData() );
-	}
-	
 	if( pattern )
 	{
 		glPushAttrib( GL_ALL_ATTRIB_BITS );
@@ -499,7 +527,7 @@ void display()
 				glColor4fv( glm::value_ptr( Pattern::Color ) );
 
 				int x0 = 10;
-				int y0 = 15;
+				int y0 = ( uiActive ? 35 : 15 );
 
 
 				sprintf( tempStr, "%s [%s]", pattern->getName().c_str(), pattern->getSizeString().c_str() );
@@ -539,6 +567,172 @@ void display()
 		}
 		glPopAttrib();
 	}
+
+	if( uiActive )
+	{
+		ImGui_ImplOpenGL2_NewFrame();
+
+		ImGuiIO& io = ImGui::GetIO();
+		io.DisplaySize = ImVec2( (float) windowWidth, (float) windowHeight );
+		if( io.DeltaTime < std::numeric_limits<float>::epsilon() )
+			io.DeltaTime = (float) dt;
+		ImGui::NewFrame();
+
+		//TODO: draw GUI here
+		if( ImGui::BeginMainMenuBar() )
+		{
+			if( ImGui::BeginMenu( "File" ) )
+			{
+				if( ImGui::BeginMenu( "Create" ) )
+				{
+					if( ImGui::MenuItem( "SpiralCircle" ) )
+					{
+						clearPattern();
+
+						params = new SpiralCircle::PatternParams();
+						pattern = new SpiralCircle();
+						if( pattern->build( params ) )
+						{
+							pattern->setScale( scale );
+							statusString = "created SpiralCircle";
+						}
+						else
+						{
+							statusString = "ERROR: creating SpiralCircle failed";
+							clearPattern();
+						}
+					}
+					if( ImGui::MenuItem( "BoustrophedonCircle" ) )
+					{
+						clearPattern();
+
+						params = new BoustrophedonCircle::PatternParams();
+						pattern = new BoustrophedonCircle();
+						if( pattern->build( params ) )
+						{
+							pattern->setScale( scale );
+							statusString = "created BoustrophedonCicle";
+						}
+						else
+						{
+							statusString = "ERROR: creating BoustrophedonCicle failed";
+							clearPattern();
+						}
+					}
+					if( ImGui::MenuItem( "BoustrophedonQuadOrtho" ) )
+					{
+						clearPattern();
+
+						params = new BoustrophedonQuadOrtho::PatternParams();
+						pattern = new BoustrophedonQuadOrtho();
+						if( pattern->build( params ) )
+						{
+							pattern->setScale( scale );
+							statusString = "created BoustrophedonQuadOrtho";
+						}
+						else
+						{
+							statusString = "ERROR: creating BoustrophedonQuadOrtho failed";
+							clearPattern();
+						}
+					}
+					if( ImGui::MenuItem( "BoustrophedonQuadDiag" ) )
+					{
+						clearPattern();
+
+						params = new BoustrophedonQuadDiag::PatternParams();
+						pattern = new BoustrophedonQuadDiag();
+						if( pattern->build( params ) )
+						{
+							pattern->setScale( scale );
+							statusString = "created BoustrophedonQuadDiag";
+						}
+						else
+						{
+							statusString = "ERROR: creating BoustrophedonQuadDiag failed";
+							clearPattern();
+						}
+					}
+					if( ImGui::MenuItem( "BoustrophedonQuadDouble" ) )
+					{
+						clearPattern();
+
+						params = new BoustrophedonQuadDouble::PatternParams();
+						pattern = new BoustrophedonQuadDouble();
+						if( pattern->build( params ) )
+						{
+							pattern->setScale( scale );
+							statusString = "created BoustrophedonQuadDouble";
+						}
+						else
+						{
+							statusString = "ERROR: creating BoustrophedonQuadDouble failed";
+							clearPattern();
+						}
+					}
+					ImGui::EndMenu();
+				}
+				if( ImGui::MenuItem( "Save", "F2" ) )
+				{
+					save();
+				}
+				if( ImGui::MenuItem( "Exit", "ESC" ) )
+				{
+					quit = true;
+				}
+				ImGui::EndMenu();
+			}
+
+			if( ImGui::BeginMenu( "Scale" ) )
+			{
+				if( ImGui::RadioButton( "m", ( scale == 1 ) ) )
+				{
+					scale = 1;
+					if( pattern )
+						pattern->setScale( scale );
+				}
+				if( ImGui::RadioButton( "cm", ( scale == 100 ) ) )
+				{
+					scale = 100;
+					if( pattern )
+						pattern->setScale( scale );
+				}
+				if( ImGui::RadioButton( "mm", ( scale == 1000 ) ) )
+				{
+					scale = 1000;
+					if( pattern )
+						pattern->setScale( scale );
+				}
+
+
+				ImGui::EndMenu();
+			}
+
+			ImGui::EndMainMenuBar();
+		}
+
+		ImGui::Begin( "params" );
+		{
+			if( pattern && params )
+				if( params->drawUI() )
+					pattern->build( params );
+		}
+		ImGui::End();
+
+		ImGui::SetNextWindowPos( ImVec2( 0, windowHeight - 25 ) );
+		ImGui::SetNextWindowSize( ImVec2( windowWidth, 25 ) );
+		ImGui::Begin( "##status", nullptr,
+			ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
+			ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar |
+			ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings );
+
+		ImGui::Text( "%s", statusString.c_str() );
+		ImGui::End();
+
+		ImGui::Render();
+
+		ImGui_ImplOpenGL2_RenderDrawData( ImGui::GetDrawData() );
+	}
 	
 #ifdef USE_GLUT
 	glutSwapBuffers();
@@ -567,7 +761,7 @@ void idle()
 
 void moved( int x, int y )
 {
-	std::cout << "moved to: " << x << ", " << y << std::endl;
+//	std::cout << "moved to: " << x << ", " << y << std::endl;
 }
 
 void sizeChanged( int width, int height )
@@ -600,6 +794,93 @@ bool ctrlHandler( DWORD fdwCtrlType )
 	}
 
 	return false;
+}
+
+void initImGui()
+{
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void) io;
+
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
+
+	// Setup Platform/Renderer bindings
+	ImGui_ImplFreeGLUT_Init();
+	ImGui_ImplOpenGL2_Init();
+
+	ImGuiStyle& style = ImGui::GetStyle();
+
+	float alpha = 1.0f;
+	// https://gist.github.com/dougbinks/8089b4bbaccaaf6fa204236978d165a9#file-imguiutils-h-L9-L93
+	// light style from Pacome Danhiez (user itamago) https://github.com/ocornut/imgui/pull/511#issuecomment-175719267
+	style.Alpha = 1.0f;
+	style.FrameRounding = 3.0f;
+	style.Colors[ImGuiCol_Text] = ImVec4( 0.00f, 0.00f, 0.00f, 1.00f );
+	style.Colors[ImGuiCol_TextDisabled] = ImVec4( 0.60f, 0.60f, 0.60f, 1.00f );
+	style.Colors[ImGuiCol_WindowBg] = ImVec4( 0.94f, 0.94f, 0.94f, 0.94f );
+	style.Colors[ImGuiCol_ChildBg] = ImVec4( 0.00f, 0.00f, 0.00f, 0.00f );
+	style.Colors[ImGuiCol_PopupBg] = ImVec4( 1.00f, 1.00f, 1.00f, 0.94f );
+	style.Colors[ImGuiCol_Border] = ImVec4( 0.00f, 0.00f, 0.00f, 0.39f );
+	style.Colors[ImGuiCol_BorderShadow] = ImVec4( 1.00f, 1.00f, 1.00f, 0.10f );
+	style.Colors[ImGuiCol_FrameBg] = ImVec4( 1.00f, 1.00f, 1.00f, 0.94f );
+	style.Colors[ImGuiCol_FrameBgHovered] = ImVec4( 0.26f, 0.59f, 0.98f, 0.40f );
+	style.Colors[ImGuiCol_FrameBgActive] = ImVec4( 0.26f, 0.59f, 0.98f, 0.67f );
+	style.Colors[ImGuiCol_TitleBg] = ImVec4( 0.96f, 0.96f, 0.96f, 1.00f );
+	style.Colors[ImGuiCol_TitleBgCollapsed] = ImVec4( 1.00f, 1.00f, 1.00f, 0.51f );
+	style.Colors[ImGuiCol_TitleBgActive] = ImVec4( 0.82f, 0.82f, 0.82f, 1.00f );
+	style.Colors[ImGuiCol_MenuBarBg] = ImVec4( 0.86f, 0.86f, 0.86f, 1.00f );
+	style.Colors[ImGuiCol_ScrollbarBg] = ImVec4( 0.98f, 0.98f, 0.98f, 0.53f );
+	style.Colors[ImGuiCol_ScrollbarGrab] = ImVec4( 0.69f, 0.69f, 0.69f, 1.00f );
+	style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4( 0.59f, 0.59f, 0.59f, 1.00f );
+	style.Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4( 0.49f, 0.49f, 0.49f, 1.00f );
+	style.Colors[ImGuiCol_CheckMark] = ImVec4( 0.26f, 0.59f, 0.98f, 1.00f );
+	style.Colors[ImGuiCol_SliderGrab] = ImVec4( 0.24f, 0.52f, 0.88f, 1.00f );
+	style.Colors[ImGuiCol_SliderGrabActive] = ImVec4( 0.26f, 0.59f, 0.98f, 1.00f );
+	style.Colors[ImGuiCol_Button] = ImVec4( 0.26f, 0.59f, 0.98f, 0.40f );
+	style.Colors[ImGuiCol_ButtonHovered] = ImVec4( 0.26f, 0.59f, 0.98f, 1.00f );
+	style.Colors[ImGuiCol_ButtonActive] = ImVec4( 0.06f, 0.53f, 0.98f, 1.00f );
+	style.Colors[ImGuiCol_Header] = ImVec4( 0.26f, 0.59f, 0.98f, 0.31f );
+	style.Colors[ImGuiCol_HeaderHovered] = ImVec4( 0.26f, 0.59f, 0.98f, 0.80f );
+	style.Colors[ImGuiCol_HeaderActive] = ImVec4( 0.26f, 0.59f, 0.98f, 1.00f );
+	style.Colors[ImGuiCol_ResizeGrip] = ImVec4( 1.00f, 1.00f, 1.00f, 0.50f );
+	style.Colors[ImGuiCol_ResizeGripHovered] = ImVec4( 0.26f, 0.59f, 0.98f, 0.67f );
+	style.Colors[ImGuiCol_ResizeGripActive] = ImVec4( 0.26f, 0.59f, 0.98f, 0.95f );
+	style.Colors[ImGuiCol_Tab] = ImVec4( 0.26f, 0.59f, 0.98f, 0.31f );
+	style.Colors[ImGuiCol_TabHovered] = ImVec4( 0.26f, 0.59f, 0.98f, 0.80f );
+	style.Colors[ImGuiCol_TabActive] = ImVec4( 0.26f, 0.59f, 0.98f, 1.00f );
+	style.Colors[ImGuiCol_TabUnfocused] = ImVec4( 0.26f, 0.59f, 0.98f, 0.31f );
+	style.Colors[ImGuiCol_TabUnfocusedActive] = ImVec4( 0.26f, 0.59f, 0.98f, 0.80f );
+	style.Colors[ImGuiCol_PlotLines] = ImVec4( 0.39f, 0.39f, 0.39f, 1.00f );
+	style.Colors[ImGuiCol_PlotLinesHovered] = ImVec4( 1.00f, 0.43f, 0.35f, 1.00f );
+	style.Colors[ImGuiCol_PlotHistogram] = ImVec4( 0.90f, 0.70f, 0.00f, 1.00f );
+	style.Colors[ImGuiCol_PlotHistogramHovered] = ImVec4( 1.00f, 0.60f, 0.00f, 1.00f );
+	style.Colors[ImGuiCol_TextSelectedBg] = ImVec4( 0.26f, 0.59f, 0.98f, 0.35f );
+	style.Colors[ImGuiCol_TextSelectedBg] = ImVec4( 0.26f, 0.59f, 0.98f, 0.80f );
+	style.Colors[ImGuiCol_DragDropTarget] = ImVec4( 0.06f, 0.53f, 0.98f, 1.00f );
+	//style.Colors[ImGuiCol_NavHighlight] = ImVec4(  );
+	//style.Colors[ImGuiCol_NavWindowingHighlight] = ImVec4(  );
+	//style.Colors[ImGuiCol_NavWindowingDimBg] = ImVec4(  );
+	//style.Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(  );
+
+	style.WindowRounding = 0;
+	style.FrameRounding = 0;
+	style.PopupRounding = 0;
+
+	for( int i = 0; i <= ImGuiCol_COUNT; i++ )
+	{
+		ImVec4& col = style.Colors[i];
+		if( col.w < 1.00f )
+		{
+			col.x *= alpha;
+			col.y *= alpha;
+			col.z *= alpha;
+			col.w *= alpha;
+		}
+	}
+
+	//stupid ImGui is stupid. have to use flag so it won't crash at shutdown when we did not make it until here.
+	imGuiInitialized = true;
 }
 
 void initGL( int argc, char **argv )
@@ -703,20 +984,7 @@ void initGL( int argc, char **argv )
 	glDisable( GL_CULL_FACE );
 	glDisable( GL_DEPTH_TEST );
 
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void) io;
-
-	// Setup Dear ImGui style
-	ImGui::StyleColorsDark();
-
-	// Setup Platform/Renderer bindings
-	ImGui_ImplFreeGLUT_Init();
-	ImGui_ImplOpenGL2_Init();
-
-	//stupid ImGui is stupid. have to use flag so it won't crash at shutdown when we did not make it until here.
-	imGuiInitialized = true;
-
+	initImGui();
 
 	moved( windowX, windowY );
 	sizeChanged( windowWidth, windowHeight );
@@ -731,7 +999,7 @@ void cleanup()
 		return;
 	cleaned = true;
 
-	safeDelete( pattern );
+	clearPattern();
 
 	for( auto &it : grids )
 		safeDelete( it );

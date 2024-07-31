@@ -8,16 +8,60 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include <imgui/imgui_internal.h>
 
 #define MIN_JUMP_FACTOR		0.20f
 #define CONNECTOR_LENGTH	0.01f
 
 namespace TextileUX
 {
-	Trace::Trace( float jumpSize, float minJumpSize, const glm::vec4 &color ) :
+	class ScopedImGuiDisable
+	{
+	private:
+		bool _disabled;
+
+	public:
+		explicit ScopedImGuiDisable( bool disable = true ) :
+			_disabled( false )
+		{
+			if( disable )
+				this->disable();
+		}
+
+		~ScopedImGuiDisable()
+		{
+			enable();
+		}
+
+		void disable()
+		{
+			if( !_disabled )
+			{
+				ImGui::PushItemFlag( ImGuiItemFlags_Disabled, true );
+				ImGui::PushStyleVar( ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f );
+
+				_disabled = true;
+			}
+		}
+
+		void enable()
+		{
+			if( _disabled )
+			{
+				ImGui::PopItemFlag();
+				ImGui::PopStyleVar();
+
+				_disabled = false;
+			}
+		}
+	};
+
+
+	Trace::Trace( const glm::vec4 &color ) :
 		_color( color ),
-		_jumpSize( jumpSize ),
-		_minJumpSize( minJumpSize < 0.00000001 ? jumpSize * MIN_JUMP_FACTOR : minJumpSize ),
+		_jumpSize( 0 ),
+		_minJumpSize( 0 ),
 		_runLength( 0.0f ),
 		_vbPath( "path" ),
 		_vbStitches( "stitches" )
@@ -84,8 +128,11 @@ namespace TextileUX
 		return true;
 	}
 
-	bool Trace::rebuild()
+	bool Trace::rebuild( float jumpSize, float minJumpSize )
 	{
+		_jumpSize = jumpSize;
+		_minJumpSize = minJumpSize < 0.00000001 ? jumpSize * MIN_JUMP_FACTOR : minJumpSize;
+
 		if( !resample() )
 			return false;
 
@@ -163,15 +210,38 @@ namespace TextileUX
 
 
 
-	float Pattern::Epsilon = 0.00001;
+
+	bool PatternParamsBase::drawUI()
+	{
+		if( ImGui::SliderFloat( "jump size", &_jumpSize, 0.1f, 30.0f ) )
+			_invalidated = true;
+		if( ImGui::SliderFloat( "min jump size", &_minJumpSize, 0.0f, 1.0f ) )
+			_invalidated = true;
+		if( ImGui::SliderFloat( "trace dist", &_dist, 0.1, 10.0f ) )
+			_invalidated = true;
+
+		ScopedImGuiDisable disable( !_invalidated );
+
+		if( ImGui::Button( "rebuild" ) )
+		{
+			_invalidated = false;
+			return true;
+		}
+
+		return false;
+	}
+
+
+	float Pattern::Epsilon = 0.00001f;
 	float Pattern::DistanceTolerance = 0.001f;
 
 	glm::vec4 Pattern::Color = glm::vec4( 1, 1, 0, 1 );
 
 
-	Pattern::Pattern( const std::string &name, float jumpSize, float minJumpSize ) :
+	Pattern::Pattern( const std::string &name ) :
 		_name( name ),
-		_trace( jumpSize, minJumpSize, Color )
+		_trace( Color ),
+		_scale( DEFAULT_SCALE )
 	{}
 
 	Pattern::~Pattern()
@@ -186,9 +256,12 @@ namespace TextileUX
 		_sizeString = "";
 	}
 
-	bool Pattern::rebuild()
+	bool Pattern::build( const PatternParamsBase *params )
 	{
-		if( !_trace.rebuild() )
+		if( !params )
+			return false;
+
+		if( !_trace.rebuild( params->_jumpSize, params->_minJumpSize ) )
 			return false;
 
 		updateSizeString();
@@ -272,9 +345,8 @@ namespace TextileUX
 		if( !fp )
 			return false;
 
-		float scale = 1000.0f;
-		int canvasWidth = 300;
-		int canvasHeight = 200;
+		int canvasWidth = 300 * _scale / 1000;
+		int canvasHeight = 200 * _scale / 1000;
 		float canvasCenterX = canvasWidth / 2.0f;
 		float canvasCenterY = canvasHeight / 2.0f;
 
@@ -295,8 +367,8 @@ namespace TextileUX
 			sstr.precision( 5 );
 			for( int i = 0; i < stitches.size(); i++ )
 			{
-				float x = canvasCenterX + stitches[i].x * scale;
-				float y = canvasCenterY - stitches[i].y * scale;
+				float x = canvasCenterX + stitches[i].x * _scale;
+				float y = canvasCenterY - stitches[i].y * _scale;
 
 				sstr << ( i ? " " : "" ) << x << "," << y;
 			}
@@ -316,12 +388,18 @@ namespace TextileUX
 	}
 
 
+	bool BoustrophedonCircle::PatternParams::drawUI()
+	{
+		if( ImGui::SliderFloat( "diameter", &_diameter, 1.0f, 100.0f ) )
+			_invalidated = true;
 
+		return PatternParamsBase::drawUI();
+	}
 
-	BoustrophedonCircle::BoustrophedonCircle( float diameter, float dist, float jumpSize, float minJumpSize ) :
-		Pattern( "boustrophedon-circle", jumpSize, minJumpSize ),
-		_diameter( diameter ),
-		_dist( dist ),
+	BoustrophedonCircle::BoustrophedonCircle() :
+		Pattern( "boustrophedon-circle" ),
+		_diameter( 0.0f ),
+		_dist( 0.0f ),
 		_rMax( 0.0f )
 	{}
 
@@ -338,14 +416,26 @@ namespace TextileUX
 		_sizeString = sstr.str();
 	}
 
-	bool BoustrophedonCircle::build()
+	void BoustrophedonCircle::clear()
+	{
+		Pattern::clear();
+	}
+
+	bool BoustrophedonCircle::build( const PatternParamsBase *params )
 	{
 		clear();
+
+		const BoustrophedonCircle::PatternParams *p = dynamic_cast<const BoustrophedonCircle::PatternParams*>( params );
+		if( !p )
+			return false;
+
+		_diameter = p->_diameter;
+		_dist = p->_dist;
 
 		std::list<glm::vec3> temp;
 
 		float r = _diameter / 2.0f;
-		float jump = _trace.getJumpSize();
+		float jump = p->_jumpSize;
 
 		float s = 0;
 		int dir  = 1;
@@ -432,7 +522,7 @@ namespace TextileUX
 
 		rotate180();
 
-		return rebuild();
+		return Pattern::build( params );
 	}
 
 	std::string BoustrophedonCircle::getFullName() const
@@ -448,12 +538,29 @@ namespace TextileUX
 
 
 
-	SpiralCircle::SpiralCircle( float diameter, float dist, float outerJumpSize, float innerJumpSize, float innerDiameter, float minJumpSize ) :
-		Pattern( "spiral-circle", outerJumpSize, minJumpSize ),
-		_diameter( diameter ),
-		_dist( dist ),
-		_innerDiameter( innerDiameter ),
-		_innerJumpSize( innerJumpSize )
+	bool SpiralCircle::PatternParams::drawUI()
+	{
+		if( ImGui::SliderFloat( "diameter", &_diameter, 1.0f, 100.0f ) )
+			_invalidated = true;
+		if( ImGui::SliderFloat( "inner diameter", &_innerDiameter, 0.0f, 50.0f ) )
+			_invalidated = true;
+		if( ImGui::SliderFloat( "inner jump size", &_innerJumpSize, 0.1f, 100.0f ) )
+			_invalidated = true;
+
+		if( _innerDiameter > _diameter )
+			_innerDiameter = _diameter;
+		if( _innerJumpSize > _jumpSize )
+			_innerJumpSize = _jumpSize;
+
+		return PatternParamsBase::drawUI();
+	}
+
+	SpiralCircle::SpiralCircle() :
+		Pattern( "spiral-circle" ),
+		_diameter( 0.0f ),
+		_dist( 0.0f ),
+		_innerDiameter( 0.0f ),
+		_innerJumpSize( 0.0f )
 	{}
 	
 	SpiralCircle::~SpiralCircle()
@@ -470,24 +577,34 @@ namespace TextileUX
 		_sizeString = sstr.str();
 	}
 
-	bool SpiralCircle::build()
+	void SpiralCircle::clear()
 	{
+		Pattern::clear();
+	}
+
+	bool SpiralCircle::build( const PatternParamsBase *params )
+	{
+		clear();
+
+		const SpiralCircle::PatternParams *p = dynamic_cast<const SpiralCircle::PatternParams*>( params );
+		if( !p )
+			return false;
+
+		_diameter = p->_diameter;
+		_dist = p->_dist;
+		_innerDiameter = p->_innerDiameter;
+		_innerJumpSize = p->_innerJumpSize;
+
 		if( _innerDiameter > _diameter ) 
 			return false;
 
-		if( _innerJumpSize > _trace.getJumpSize() )
-			return false;
-
-		clear();
-
 		std::list<glm::vec3> temp;
-
 
 		//not a perfect spiral, but good enough...
 
 		float r0 = _diameter / 2.0f;
 		float r1 = _innerDiameter / 2.0f;
-		float j0 = _trace.getJumpSize();
+		float j0 = p->_jumpSize;
 		float j1 = _innerJumpSize;
 		float jump = 0;
 
@@ -534,7 +651,7 @@ namespace TextileUX
 
 		rotate90CW();
 
-		return rebuild();
+		return Pattern::build( params );
 	}
 
 	std::string SpiralCircle::getFullName() const
@@ -550,10 +667,18 @@ namespace TextileUX
 
 
 
-	BoustrophedonQuadOrtho::BoustrophedonQuadOrtho( float width, float dist, float jumpSize, float minJumpSize ) :
-		Pattern( "boustrophedon-quad-ortho", jumpSize, minJumpSize ),
-		_width( width ),
-		_dist( dist )
+	bool BoustrophedonQuadOrtho::PatternParams::drawUI()
+	{
+		if( ImGui::SliderFloat( "width", &_width, 1.0f, 100.0f ) )
+			_invalidated = true;
+
+		return PatternParamsBase::drawUI();
+	}
+
+	BoustrophedonQuadOrtho::BoustrophedonQuadOrtho() :
+		Pattern( "boustrophedon-quad-ortho" ),
+		_width( 0.0f ),
+		_dist( 0.0f )
 	{}
 
 	BoustrophedonQuadOrtho::~BoustrophedonQuadOrtho()
@@ -569,9 +694,21 @@ namespace TextileUX
 		_sizeString = sstr.str();
 	}
 
-	bool BoustrophedonQuadOrtho::build()
+	void BoustrophedonQuadOrtho::clear()
+	{
+		Pattern::clear();
+	}
+
+	bool BoustrophedonQuadOrtho::build( const PatternParamsBase *params )
 	{
 		clear();
+
+		const BoustrophedonQuadOrtho::PatternParams *p = dynamic_cast<const BoustrophedonQuadOrtho::PatternParams*>( params );
+		if( !p )
+			return false;
+
+		_width = p->_width;
+		_dist = p->_dist;
 
 		std::vector<glm::vec3> temp;
 
@@ -602,7 +739,7 @@ namespace TextileUX
 		for( auto &p : temp )
 			_trace.insertBack( p );
 
-		return rebuild();
+		return Pattern::build( params );
 	}
 
 	std::string BoustrophedonQuadOrtho::getFullName() const
@@ -617,10 +754,18 @@ namespace TextileUX
 
 
 
-	BoustrophedonQuadDiag::BoustrophedonQuadDiag( float width, float dist, float jumpSize, float minJumpSize ) :
-		Pattern( "boustrophedon-quad-diag", jumpSize, minJumpSize ),
-		_width( width ),
-		_dist( dist )
+	bool BoustrophedonQuadDiag::PatternParams::drawUI()
+	{
+		if( ImGui::SliderFloat( "width", &_width, 1.0f, 100.0f ) )
+			_invalidated = true;
+
+		return PatternParamsBase::drawUI();
+	}
+
+	BoustrophedonQuadDiag::BoustrophedonQuadDiag() :
+		Pattern( "boustrophedon-quad-diag" ),
+		_width( 0.0f ),
+		_dist( 0.0f )
 	{}
 
 	BoustrophedonQuadDiag::~BoustrophedonQuadDiag()
@@ -636,13 +781,25 @@ namespace TextileUX
 		_sizeString = sstr.str();
 	}
 
-	bool BoustrophedonQuadDiag::build()
+	void BoustrophedonQuadDiag::clear()
+	{
+		Pattern::clear();
+	}
+
+	bool BoustrophedonQuadDiag::build( const PatternParamsBase *params )
 	{
 		clear();
 
+		const BoustrophedonQuadDiag::PatternParams *p = dynamic_cast<const BoustrophedonQuadDiag::PatternParams*>( params );
+		if( !p )
+			return false;
+
+		_width = p->_width;
+		_dist = p->_dist;
+
 		std::vector<glm::vec3> temp;
 
-		//float jump = _trace.getJumpSize();
+		//float jump = p->_jumpSize;
 
 		float diagonal = _width * sqrt( 2 );
 		float halfDiagonal = diagonal / 2;
@@ -675,7 +832,7 @@ namespace TextileUX
 
 		rotate( toRad( 45 ) );
 
-		return rebuild();
+		return Pattern::build( params );
 	}
 
 	std::string BoustrophedonQuadDiag::getFullName() const
@@ -691,10 +848,37 @@ namespace TextileUX
 
 
 
-	BoustrophedonQuadDouble::BoustrophedonQuadDouble( float width, float dist, int jumpMult, float minJumpSize ) :
-		Pattern( "boustrophedon-quad-double", dist * jumpMult, minJumpSize ),
-		_width( width ),
-		_dist( dist )
+	bool BoustrophedonQuadDouble::PatternParams::drawUI()
+	{
+		if( ImGui::SliderFloat( "width", &_width, 1.0f, 100.0f ) )
+			_invalidated = true;
+
+		if( ImGui::SliderInt( "jump multiplier", &_jumpMult, 1, 10 ) )
+		{
+			_invalidated = true;
+			_jumpSize = _jumpMult * _dist;
+		}
+
+		if( ImGui::SliderFloat( "min jump size", &_minJumpSize, 0.0f, 1.0f ) )
+			_invalidated = true;
+		if( ImGui::SliderFloat( "trace dist", &_dist, 0.1, 10.0f ) )
+			_invalidated = true;
+
+		ScopedImGuiDisable disable( !_invalidated );
+
+		if( ImGui::Button( "rebuild" ) )
+		{
+			_invalidated = false;
+			return true;
+		}
+
+		return false;
+	}
+
+	BoustrophedonQuadDouble::BoustrophedonQuadDouble() :
+		Pattern( "boustrophedon-quad-double" ),
+		_width( 0.0f ),
+		_dist( 0.0f )
 	{}
 
 	BoustrophedonQuadDouble::~BoustrophedonQuadDouble()
@@ -710,9 +894,21 @@ namespace TextileUX
 		_sizeString = sstr.str();
 	}
 
-	bool BoustrophedonQuadDouble::build()
+	void BoustrophedonQuadDouble::clear()
+	{
+		Pattern::clear();
+	}
+
+	bool BoustrophedonQuadDouble::build( const PatternParamsBase *params )
 	{
 		clear();
+
+		const BoustrophedonQuadDouble::PatternParams *p = dynamic_cast<const BoustrophedonQuadDouble::PatternParams*>( params );
+		if( !p )
+			return false;
+
+		_width = p->_width;
+		_dist = p->_dist;
 
 		std::vector<glm::vec3> temp;
 
@@ -762,7 +958,7 @@ namespace TextileUX
 		for( auto &p : temp )
 			_trace.insertBack( p );
 
-		return rebuild();
+		return Pattern::build( params );
 	}
 
 	std::string BoustrophedonQuadDouble::getFullName() const
