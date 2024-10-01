@@ -64,13 +64,15 @@ namespace TextileUX
 		float _defaultRotation;
 		float _defaultScale;
 
+		bool _lockRotation;
+
 		virtual void update();
 		virtual void motion( const glm::ivec2 &pos );
 		virtual void mouseWheelMotion( int direction, const glm::ivec2 &pos );
 
 	public:
-		Trackball2D();
-		Trackball2D( const glm::vec3 &t, float r, float s );
+		explicit Trackball2D( bool lockRotation = true );
+		Trackball2D( const glm::vec3 &t, float r, float s, bool lockRotation = true );
 		~Trackball2D();
 
 		virtual void reset();

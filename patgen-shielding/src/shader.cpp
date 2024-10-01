@@ -85,7 +85,7 @@ namespace TextileUX
 		}
 
 		std::vector<char> source( fileSize );
-		int read = 0;
+		size_t read = 0;
 		if( ( read = fread( &source[0], 1, source.size(), fp ) ) != source.size() )
 			std::cerr << "<warning> did not read expected number of bytes (" << read << " vs. " << source.size() << ")" << std::endl;
 

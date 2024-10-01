@@ -14,7 +14,10 @@
 #endif
 
 #include <glm/glm.hpp>
+
 #include <imgui/imgui.h>
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include <imgui/imgui_internal.h>
 
 #include <GL/freeglut.h>
 
@@ -267,6 +270,47 @@ namespace TextileUX
 		~ScopedGlAttribs()
 		{
 			glPopAttrib();
+		}
+	};
+
+	class ScopedImGuiDisable
+	{
+	private:
+		bool _disabled;
+
+	public:
+		explicit ScopedImGuiDisable( bool disable = true ) :
+			_disabled( false )
+		{
+			if( disable )
+				this->disable();
+		}
+
+		~ScopedImGuiDisable()
+		{
+			enable();
+		}
+
+		void disable()
+		{
+			if( !_disabled )
+			{
+				ImGui::PushItemFlag( ImGuiItemFlags_Disabled, true );
+				ImGui::PushStyleVar( ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f );
+
+				_disabled = true;
+			}
+		}
+
+		void enable()
+		{
+			if( _disabled )
+			{
+				ImGui::PopItemFlag();
+				ImGui::PopStyleVar();
+
+				_disabled = false;
+			}
 		}
 	};
 

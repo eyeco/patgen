@@ -3,7 +3,7 @@
 #include <common.h>
 
 #include <iostream>
-#include <experimental/filesystem>
+#include <filesystem>
 
 namespace TextileUX
 {
@@ -30,7 +30,7 @@ namespace TextileUX
 
 	bool IniFile::read()
 	{
-		using namespace std::experimental::filesystem::v1;
+		using namespace std::filesystem;
 
 		if( !exists( this->filename ) )
 		{

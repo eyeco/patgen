@@ -29,14 +29,16 @@ namespace TextileUX
 
 		void draw();
 
+		bool validate();
+
 		void clear();
 		bool rebuild( float jumpSize, float minJumpSize );
 
 		float getJumpSize() const { return _jumpSize; }
 
 		float getRunLength() const { return _runLength; }
-		unsigned int getVertexCount() const { return _verts.size(); }
-		unsigned int getStitchCount() const { return _stitches.size(); }
+		size_t getVertexCount() const { return _verts.size(); }
+		size_t getStitchCount() const { return _stitches.size(); }
 
 		void insertBack( const glm::vec3 &v );
 		void insertFront( const glm::vec3 &v );
@@ -49,6 +51,13 @@ namespace TextileUX
 
 		std::vector<glm::vec3> &getStitches() { return _stitches; }
 		const std::vector<glm::vec3> &getStitches() const { return _stitches; }
+
+		void translate( const glm::vec3& t );
+		void rotate( float rad );
+
+		void rotate90CW();
+		void rotate90CCW();
+		void rotate180();
 	};
 
 	class PatternParamsBase
@@ -85,7 +94,7 @@ namespace TextileUX
 
 		virtual void clear();
 
-		bool validate();
+		virtual bool validate();
 
 		virtual void updateSizeString() = 0;
 
@@ -104,210 +113,21 @@ namespace TextileUX
 		virtual bool build( const PatternParamsBase *params );
 		virtual std::string getFullName() const = 0;
 
-		void draw();
-		bool save();
-
-		float getTotalRunLength() const { return _trace.getRunLength(); }
-		unsigned int getTotalStitchCount() const { return _trace.getStitchCount(); }
+		virtual void draw();
+		virtual bool save();
 
 		const std::string &getSizeString() const { return _sizeString; }
 
 		const Trace &getTrace() const { return _trace; }
-		Trace &getLowerTrace() { return _trace; }
+		Trace &getTrace() { return _trace; }
 
 		const std::string &getName() const { return _name; }
 
-		void translate( const glm::vec3 &t );
-		void rotate( float rad );
+		virtual void translate( const glm::vec3 &t );
+		virtual void rotate( float rad );
 
-		void rotate90CW();
-		void rotate90CCW();
-		void rotate180();
-	};
-
-	class BoustrophedonCircle : public Pattern
-	{
-	private:
-		float _diameter;
-		float _dist;
-		float _rMax;
-
-		virtual void clear();
-
-		virtual void updateSizeString();
-
-	public:
-		class PatternParams : public PatternParamsBase
-		{
-			friend class BoustrophedonCircle;
-
-		private:
-			float _diameter;
-
-		public:
-			PatternParams() :
-				PatternParamsBase(),
-				_diameter( 10 )
-			{}
-
-			virtual bool drawUI();
-		};
-
-
-		BoustrophedonCircle();
-		virtual ~BoustrophedonCircle();
-
-		virtual bool build( const PatternParamsBase *params );
-		virtual std::string getFullName() const;
-	};
-
-	class SpiralCircle : public Pattern
-	{
-	private:
-		float _diameter;
-		float _dist;
-		float _innerDiameter;
-
-		float _innerJumpSize;
-
-		glm::vec3 _first;
-		glm::vec3 _last;
-
-		virtual void clear();
-
-		virtual void updateSizeString();
-
-	public:
-		class PatternParams : public PatternParamsBase
-		{
-			friend class SpiralCircle;
-
-		private:
-			float _diameter;
-			float _innerDiameter;
-			float _innerJumpSize;
-
-		public:
-			PatternParams() :
-				PatternParamsBase(),
-				_diameter( 10 ),
-				_innerDiameter( 0 ),
-				_innerJumpSize( 0.1 )
-			{}
-
-			virtual bool drawUI();
-		};
-
-		SpiralCircle();
-		virtual ~SpiralCircle();
-
-		virtual bool build( const PatternParamsBase *params );
-		virtual std::string getFullName() const;
-	};
-
-	class BoustrophedonQuadOrtho : public Pattern
-	{
-	private:
-		float _width;
-		float _dist;
-
-		virtual void clear();
-
-		virtual void updateSizeString();
-
-	public:
-		class PatternParams : public PatternParamsBase
-		{
-			friend class BoustrophedonQuadOrtho;
-
-		private:
-			float _width;
-
-		public:
-			PatternParams() :
-				PatternParamsBase(),
-				_width( 10 )
-			{}
-
-			virtual bool drawUI();
-		};
-
-		BoustrophedonQuadOrtho();
-		virtual ~BoustrophedonQuadOrtho();
-
-		virtual bool build( const PatternParamsBase *params );
-		virtual std::string getFullName() const;
-	};
-
-	class BoustrophedonQuadDiag : public Pattern
-	{
-	private:
-		float _width;
-		float _dist;
-
-		virtual void clear();
-
-		virtual void updateSizeString();
-
-	public:
-		class PatternParams : public PatternParamsBase
-		{
-			friend class BoustrophedonQuadDiag;
-
-		private:
-			float _width;
-
-		public:
-			PatternParams() :
-				PatternParamsBase(),
-				_width( 10 )
-			{}
-
-			virtual bool drawUI();
-		};
-
-		BoustrophedonQuadDiag();
-		virtual ~BoustrophedonQuadDiag();
-
-		virtual bool build( const PatternParamsBase *params );
-		virtual std::string getFullName() const;
-	};
-
-	class BoustrophedonQuadDouble : public Pattern
-	{
-	private:
-		float _width;
-		float _dist;
-
-		virtual void clear();
-
-		virtual void updateSizeString();
-
-	public:
-		class PatternParams : public PatternParamsBase
-		{
-			friend class BoustrophedonQuadDouble;
-
-		private:
-			float _width;
-			int _jumpMult;
-
-		public:
-			PatternParams() :
-				PatternParamsBase(),
-				_width( 10 ),
-				_jumpMult( 1 )
-			{
-				_jumpSize = _dist * _jumpMult;
-			}
-
-			virtual bool drawUI();
-		};
-
-		explicit BoustrophedonQuadDouble();
-		virtual ~BoustrophedonQuadDouble();
-
-		virtual bool build( const PatternParamsBase *params );
-		virtual std::string getFullName() const;
+		virtual void rotate90CW();
+		virtual void rotate90CCW();
+		virtual void rotate180();
 	};
 }

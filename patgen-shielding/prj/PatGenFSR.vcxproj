@@ -11,13 +11,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\patGenShielding.cpp" />
+    <ClCompile Include="..\src\patGenFSR.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{229540C7-4927-4EA4-AF1A-1E877D921E97}</ProjectGuid>
+    <ProjectGuid>{8E7ED8E3-3B14-456C-8AC9-05B98C9E1FBB}</ProjectGuid>
     <RootNamespace>DepthCalibration</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>PatGenShielding</ProjectName>
+    <ProjectName>PatGenFSR</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">

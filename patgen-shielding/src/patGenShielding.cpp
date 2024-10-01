@@ -4,9 +4,9 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <iostream>
 #include <algorithm>
 #include <filesystem>
-#include <experimental/filesystem>
 
 #include <conio.h>
 
@@ -16,6 +16,8 @@
 #include <iniFile.h>
 
 #include <pattern.h>
+#include <patternsSingle.h>
+
 #include <trackball.h>
 #include <vertexBuffer.h>
 
@@ -442,7 +444,7 @@ void display()
 
 			for( int i = 0; i < grids.size(); i++ )
 			{
-				glLineWidth( grids.size() - i );
+				glLineWidth( (GLfloat)( grids.size() - i ) );
 				grids[i]->draw();
 			}
 
@@ -458,8 +460,8 @@ void display()
 						glEnable( GL_COLOR_MATERIAL );
 						glDisable( GL_DEPTH_TEST );
 
-						if( stitchProgress > pattern->getTotalStitchCount() )
-							stitchProgress = pattern->getTotalStitchCount();
+						if( stitchProgress > pattern->getTrace().getStitchCount() )
+							stitchProgress = pattern->getTrace().getStitchCount();
 
 						if( stitchProgress )
 						{
@@ -526,8 +528,8 @@ void display()
 
 				glColor4fv( glm::value_ptr( Pattern::Color ) );
 
-				int x0 = 10;
-				int y0 = ( uiActive ? 35 : 15 );
+				float x0 = 10;
+				float y0 = ( uiActive ? 35 : 15 );
 
 
 				sprintf( tempStr, "%s [%s]", pattern->getName().c_str(), pattern->getSizeString().c_str() );
@@ -537,29 +539,15 @@ void display()
 				printText( "trace:", x0, y0 );
 				y0 += 15;
 
-				sprintf( tempStr, "  vert:   %d", pattern->getTrace().getVertexCount() );
+				sprintf( tempStr, "  vert:   %d", (int)pattern->getTrace().getVertexCount() );
 				printText( tempStr, x0, y0 );
 				y0 += 15;
 
-				sprintf( tempStr, "  stitches: %d", pattern->getTrace().getStitchCount() );
+				sprintf( tempStr, "  stitches: %d", (int)pattern->getTrace().getStitchCount() );
 				printText( tempStr, x0, y0 );
 				y0 += 15;
 
 				sprintf( tempStr, "  runlength: %.3f", pattern->getTrace().getRunLength() );
-				printText( tempStr, x0, y0 );
-				y0 += 15;
-
-
-				glColor4f( 1, 1, 1, 1 );
-
-				printText( "total:", x0, y0 );
-				y0 += 15;
-
-				sprintf( tempStr, "  stitches: %d", pattern->getTotalStitchCount() );
-				printText( tempStr, x0, y0 );
-				y0 += 15;
-
-				sprintf( tempStr, "  runlength: %.3f", pattern->getTotalRunLength() );
 				printText( tempStr, x0, y0 );
 				y0 += 15;
 			}
@@ -1069,68 +1057,6 @@ int main( int argc, char **argv )
 		if( StartupConfig::readPA( argc, argv, cfg ) )
 		{
 			initGL( argc, argv );
-
-			//pattern = new SpiralCircle( 0.018f, 0.0005f, 0.004f, 0.002f, 0.003f );
-			//pattern->build();
-			//pattern->save();
-			//safeDelete( pattern );
-
-			//pattern = new BoustrophedonCircle( 0.018f, 0.0005f, 0.005f, 0.0001f );
-			//pattern->build();
-			//pattern->save();
-			//safeDelete( pattern );
-
-			//pattern = new BoustrophedonQuadOrtho( 0.004f, 0.0005f, 0.005f, 0.00001 );
-			//pattern->build();
-			//pattern->save();
-			//safeDelete( pattern );
-
-			//pattern = new BoustrophedonQuadDiag( 0.036f, 0.002f, 0.005f, 0.00001 );
-			//pattern->build();
-			//pattern->save();
-			//safeDelete( pattern );
-
-			//pattern = new BoustrophedonQuadDouble( 0.036f, 0.002f, 1, 0.00001 );
-			////pattern = new BoustrophedonQuadDouble( 0.036f, 0.001f, 2, 0.00001 );
-			//pattern->build();
-			//pattern->save();
-			//safeDelete( pattern );
-
-			/*
-			float w[] = { 0.012f, 0.015f, 0.017f };
-			float dist[] = { 0.0005f, 0.001f, 0.002f };
-			for( int i = 0; i < 3; i++ )
-			{
-				pattern = new BoustrophedonQuadOrtho( w[i], dist[1], 0.005f, 0.00001 );
-				pattern->build();
-				pattern->save();
-				safeDelete( pattern );
-			}
-			for( int i = 0; i < 3; i++ )
-			{
-				pattern = new BoustrophedonQuadOrtho( w[1], dist[i], 0.005f, 0.00001 );
-				pattern->build();
-				pattern->save();
-				safeDelete( pattern );
-			}
-			pattern = new BoustrophedonQuadDiag( w[1], dist[1], 0.005f, 0.00001 );
-			pattern->build();
-			pattern->save();
-			safeDelete( pattern );
-
-			pattern = new BoustrophedonQuadDouble( w[1], dist[1], 2, 0.00001 );
-			pattern->build();
-			pattern->save();
-			safeDelete( pattern );
-
-			pattern = new BoustrophedonQuadDouble( 0.016, 0.002, 1, 0.00001 );
-			pattern->build();
-			pattern->save();
-			safeDelete( pattern );
-			*/
-
-
-			//return EXIT_SUCCESS;
 
 #ifdef USE_GLUT
 			glutMainLoop();

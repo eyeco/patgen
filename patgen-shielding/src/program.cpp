@@ -30,6 +30,8 @@ namespace TextileUX
 			return false;
 
 		glUseProgram( _id );
+
+		return true;
 	}
 
 	bool Program::deactivate()

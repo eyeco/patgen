@@ -73,7 +73,7 @@ namespace TextileUX
 
 
 
-	Trackball2D::Trackball2D() :
+	Trackball2D::Trackball2D( bool lockRotation ) :
 		Trackball(),
 		_relativeMode( false ),
 		_trans( 0 ),
@@ -83,10 +83,11 @@ namespace TextileUX
 		_scale( 0 ),
 		_scaleSpeed( 0.01f ),
 		_wheelSpeed( 0.1f ),
-		_scalePow( 2.0f )
+		_scalePow( 2.0f ),
+		_lockRotation( lockRotation )
 	{}
 
-	Trackball2D::Trackball2D( const glm::vec3 &t, float r, float s ) :
+	Trackball2D::Trackball2D( const glm::vec3 &t, float r, float s, bool lockRotation ) :
 		Trackball(),
 		_relativeMode( false ),
 		_trans( t ),
@@ -99,7 +100,8 @@ namespace TextileUX
 		_scalePow( 2.0f ),
 		_defaultTrans( t ),
 		_defaultRotation( r ),
-		_defaultScale( s )
+		_defaultScale( s ),
+		_lockRotation( lockRotation )
 	{
 		reset();
 	}
@@ -118,7 +120,7 @@ namespace TextileUX
 	{
 		glm::ivec2 d( _first ? glm::ivec2( 0 ) : pos - _oldPos );
 
-		if( _buttonMask & ( 0x01 << 0 ) ) //left
+		if( _buttonMask & ( 0x01 << 0 ) && !_lockRotation ) //left
 		{
 			if( _relativeMode )
 				_m = glm::rotate( -d.x * _rotationSpeed, unitZ() ) * _m;

@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{506dabf8-ee43-459b-aa78-bf4bae496be7}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\shaders\multiChannel.frag" />
+    <None Include="$(MSBuildThisFileDirectory)..\shaders\passthrough.frag" />
+    <None Include="$(MSBuildThisFileDirectory)..\shaders\passthrough.vert" />
+    <None Include="$(MSBuildThisFileDirectory)..\shaders\singleChannel.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\common.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_draw.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_allegro5.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_dx10.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_dx11.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_dx12.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_dx9.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_freeglut.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_glfw.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_marmalade.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_opengl2.cpp">
+      <ExcludedFromBuild>
+      </ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_opengl3.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_sdl.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_vulkan.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_win32.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\iniFile.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\pattern.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\patternsDouble.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\patternsSingle.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\program.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\shader.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\trackball.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\vertexBuffer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\common.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\imgui\imconfig.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_allegro5.h">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_dx10.h">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_dx11.h">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_dx12.h">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_dx9.h">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_freeglut.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_glfw.h">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_marmalade.h">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_metal.h">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_opengl2.h">
+      <ExcludedFromBuild>
+      </ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_opengl3.h">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_osx.h">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_sdl.h">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_vulkan.h">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_impl_win32.h">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\imgui\imgui_internal.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\imgui\imstb_rectpack.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\imgui\imstb_textedit.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\imgui\imstb_truetype.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\iniFile.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\pattern.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\patternsDouble.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\patternsSingle.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\program.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\shader.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\trackball.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\vertexBuffer.h" />
+  </ItemGroup>
+</Project>

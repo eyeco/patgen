@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26228.9
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StitchingTool", "PatGenShielding.vcxproj", "{229540C7-4927-4EA4-AF1A-1E877D921E97}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PatGenShielding", "PatGenShielding.vcxproj", "{229540C7-4927-4EA4-AF1A-1E877D921E97}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Shared", "Shared.vcxitems", "{506DABF8-EE43-459B-AA78-BF4BAE496BE7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PatGenFSR", "PatGenFSR.vcxproj", "{8E7ED8E3-3B14-456C-8AC9-05B98C9E1FBB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,11 +19,20 @@ Global
 		{229540C7-4927-4EA4-AF1A-1E877D921E97}.Debug|x64.Build.0 = Debug|x64
 		{229540C7-4927-4EA4-AF1A-1E877D921E97}.Release|x64.ActiveCfg = Release|x64
 		{229540C7-4927-4EA4-AF1A-1E877D921E97}.Release|x64.Build.0 = Release|x64
+		{8E7ED8E3-3B14-456C-8AC9-05B98C9E1FBB}.Debug|x64.ActiveCfg = Debug|x64
+		{8E7ED8E3-3B14-456C-8AC9-05B98C9E1FBB}.Debug|x64.Build.0 = Debug|x64
+		{8E7ED8E3-3B14-456C-8AC9-05B98C9E1FBB}.Release|x64.ActiveCfg = Release|x64
+		{8E7ED8E3-3B14-456C-8AC9-05B98C9E1FBB}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B5A6FB8A-076E-40F7-8121-1D62054B6D63}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Shared.vcxitems*{229540c7-4927-4ea4-af1a-1e877d921e97}*SharedItemsImports = 4
+		Shared.vcxitems*{506dabf8-ee43-459b-aa78-bf4bae496be7}*SharedItemsImports = 9
+		Shared.vcxitems*{8e7ed8e3-3b14-456c-8ac9-05b98c9e1fbb}*SharedItemsImports = 4
 	EndGlobalSection
 EndGlobal
