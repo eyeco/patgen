@@ -571,95 +571,6 @@ void display()
 		{
 			if( ImGui::BeginMenu( "File" ) )
 			{
-				if( ImGui::BeginMenu( "Create" ) )
-				{
-					if( ImGui::MenuItem( "SpiralCircle" ) )
-					{
-						clearPattern();
-
-						params = new SpiralCircle::PatternParams();
-						pattern = new SpiralCircle();
-						if( pattern->build( params ) )
-						{
-							pattern->setUnit( unit );
-							statusString = "created SpiralCircle";
-						}
-						else
-						{
-							statusString = "ERROR: creating SpiralCircle failed";
-							clearPattern();
-						}
-					}
-					if( ImGui::MenuItem( "BoustrophedonCircle" ) )
-					{
-						clearPattern();
-
-						params = new BoustrophedonCircle::PatternParams();
-						pattern = new BoustrophedonCircle();
-						if( pattern->build( params ) )
-						{
-							pattern->setUnit( unit );
-							statusString = "created BoustrophedonCicle";
-						}
-						else
-						{
-							statusString = "ERROR: creating BoustrophedonCicle failed";
-							clearPattern();
-						}
-					}
-					if( ImGui::MenuItem( "BoustrophedonQuadOrtho" ) )
-					{
-						clearPattern();
-
-						params = new BoustrophedonQuadOrtho::PatternParams();
-						pattern = new BoustrophedonQuadOrtho();
-						if( pattern->build( params ) )
-						{
-							pattern->setUnit( unit );
-							statusString = "created BoustrophedonQuadOrtho";
-						}
-						else
-						{
-							statusString = "ERROR: creating BoustrophedonQuadOrtho failed";
-							clearPattern();
-						}
-					}
-					if( ImGui::MenuItem( "BoustrophedonQuadDiag" ) )
-					{
-						clearPattern();
-
-						params = new BoustrophedonQuadDiag::PatternParams();
-						pattern = new BoustrophedonQuadDiag();
-						if( pattern->build( params ) )
-						{
-							pattern->setUnit( unit );
-							statusString = "created BoustrophedonQuadDiag";
-						}
-						else
-						{
-							statusString = "ERROR: creating BoustrophedonQuadDiag failed";
-							clearPattern();
-						}
-					}
-					if( ImGui::MenuItem( "BoustrophedonQuadDouble" ) )
-					{
-						clearPattern();
-
-						params = new BoustrophedonQuadDouble::PatternParams();
-						pattern = new BoustrophedonQuadDouble();
-						if( pattern->build( params ) )
-						{
-							pattern->setUnit( unit );
-							statusString = "created BoustrophedonQuadDouble";
-						}
-						else
-						{
-							statusString = "ERROR: creating BoustrophedonQuadDouble failed";
-							clearPattern();
-						}
-					}
-					ImGui::EndMenu();
-				}
 				if( ImGui::MenuItem( "Save", "F2" ) )
 				{
 					save();
@@ -667,6 +578,96 @@ void display()
 				if( ImGui::MenuItem( "Exit", "ESC" ) )
 				{
 					quit = true;
+				}
+				ImGui::EndMenu();
+			}
+
+			if( ImGui::BeginMenu( "Pattern" ) )
+			{
+				if( ImGui::MenuItem( "SpiralCircle" ) )
+				{
+					clearPattern();
+
+					params = new SpiralCircle::PatternParams();
+					pattern = new SpiralCircle();
+					if( pattern->build( params ) )
+					{
+						pattern->setUnit( unit );
+						statusString = "created SpiralCircle";
+					}
+					else
+					{
+						statusString = "ERROR: creating SpiralCircle failed";
+						clearPattern();
+					}
+				}
+				if( ImGui::MenuItem( "BoustrophedonCircle" ) )
+				{
+					clearPattern();
+
+					params = new BoustrophedonCircle::PatternParams();
+					pattern = new BoustrophedonCircle();
+					if( pattern->build( params ) )
+					{
+						pattern->setUnit( unit );
+						statusString = "created BoustrophedonCicle";
+					}
+					else
+					{
+						statusString = "ERROR: creating BoustrophedonCicle failed";
+						clearPattern();
+					}
+				}
+				if( ImGui::MenuItem( "BoustrophedonQuadOrtho" ) )
+				{
+					clearPattern();
+
+					params = new BoustrophedonQuadOrtho::PatternParams();
+					pattern = new BoustrophedonQuadOrtho();
+					if( pattern->build( params ) )
+					{
+						pattern->setUnit( unit );
+						statusString = "created BoustrophedonQuadOrtho";
+					}
+					else
+					{
+						statusString = "ERROR: creating BoustrophedonQuadOrtho failed";
+						clearPattern();
+					}
+				}
+				if( ImGui::MenuItem( "BoustrophedonQuadDiag" ) )
+				{
+					clearPattern();
+
+					params = new BoustrophedonQuadDiag::PatternParams();
+					pattern = new BoustrophedonQuadDiag();
+					if( pattern->build( params ) )
+					{
+						pattern->setUnit( unit );
+						statusString = "created BoustrophedonQuadDiag";
+					}
+					else
+					{
+						statusString = "ERROR: creating BoustrophedonQuadDiag failed";
+						clearPattern();
+					}
+				}
+				if( ImGui::MenuItem( "BoustrophedonQuadDouble" ) )
+				{
+					clearPattern();
+
+					params = new BoustrophedonQuadDouble::PatternParams();
+					pattern = new BoustrophedonQuadDouble();
+					if( pattern->build( params ) )
+					{
+						pattern->setUnit( unit );
+						statusString = "created BoustrophedonQuadDouble";
+					}
+					else
+					{
+						statusString = "ERROR: creating BoustrophedonQuadDouble failed";
+						clearPattern();
+					}
 				}
 				ImGui::EndMenu();
 			}
