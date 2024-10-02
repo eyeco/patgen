@@ -97,7 +97,161 @@ namespace TextileUX
 
 	bool TiledPattern::save()
 	{
-		return TiledPattern::save();
+		float scale = 0.0f;
+
+		switch( _unit )
+		{
+		case U_M:
+			scale = 1000;
+			break;
+		case U_CM:
+			scale = 10;
+			break;
+		case U_MM:
+			scale = 1;
+			break;
+		default:
+			std::cerr << "ERROR: unit not set" << std::endl;
+			return false;
+		}
+
+		char tempStr[128];
+		sprintf( tempStr, "%s.svg", getFullName().c_str() );
+
+		FILE* fp = fopen( tempStr, "w" );
+		if( !fp )
+			return false;
+
+		//embroidery frame size is 30x20 cm
+		int canvasWidth = 300;
+		int canvasHeight = 200;
+		float canvasCenterX = canvasWidth / 2.0f;
+		float canvasCenterY = canvasHeight / 2.0f;
+
+		fprintf( fp, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" );
+		fprintf( fp,
+			"<svg xmlns=\"http://www.w3.org/2000/svg\"\n"
+			"  xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n"
+			"  version=\"1.1\" baseProfile=\"full\"\n"
+			"  width=\"%dmm\" height=\"%dmm\"\n"
+			"  viewBox=\"%d %d %d %d\">\n"
+			"  <title>%s</title>\n"
+			"  <desc></desc>\n", canvasWidth, canvasHeight, 0, 0, canvasWidth, canvasHeight, _name.c_str() );
+
+		for( auto it : _traces )
+		{
+			auto stitches = it->getStitches();
+			if( stitches.size() )
+			{
+				std::stringstream sstr;
+				sstr.precision( 5 );
+				for( int i = 0; i < stitches.size(); i++ )
+				{
+					float x = canvasCenterX + stitches[i].x * scale;
+					float y = canvasCenterY - stitches[i].y * scale;
+
+					sstr << ( i ? " " : "" ) << x << "," << y;
+				}
+
+				fprintf( fp, "  <polyline points=\"%s\" stroke=\"#%02X%02X%02X\" stroke-width=\"1\" fill=\"none\" />\n", sstr.str().c_str(),
+					(int) ( clamp01( Color.r ) * 255 ),
+					(int) ( clamp01( Color.g ) * 255 ),
+					(int) ( clamp01( Color.b ) * 255 )
+				);
+			}
+		}
+
+		for( auto it : _traces2 )
+		{
+			auto stitches2 = it->getStitches();
+			if( stitches2.size() )
+			{
+				std::stringstream sstr;
+				sstr.precision( 5 );
+				for( int i = 0; i < stitches2.size(); i++ )
+				{
+					float x = canvasCenterX + stitches2[i].x * scale;
+					float y = canvasCenterY - stitches2[i].y * scale;
+
+					sstr << ( i ? " " : "" ) << x << "," << y;
+				}
+
+				fprintf( fp, "  <polyline points=\"%s\" stroke=\"#%02X%02X%02X\" stroke-width=\"1\" fill=\"none\" />\n", sstr.str().c_str(),
+					(int) ( clamp01( Color2.r ) * 255 ),
+					(int) ( clamp01( Color2.g ) * 255 ),
+					(int) ( clamp01( Color2.b ) * 255 )
+				);
+			}
+		}
+
+		fprintf( fp, "</svg>\n" );
+
+		fclose( fp );
+
+		return true;
+	}
+
+
+	float TiledPattern::getTotalRunLength() const
+	{
+		float sum = 0;
+		for( auto it : _traces )
+			sum += it->getRunLength();
+		for( auto it : _traces2 )
+			sum += it->getRunLength();
+
+		return sum;
+	}
+	size_t TiledPattern::getTotalStitchCount() const
+	{
+		size_t sum = 0;
+		for( auto it : _traces )
+			sum += it->getStitchCount();
+		for( auto it : _traces2 )
+			sum += it->getStitchCount();
+
+		return sum;
+	}
+
+	void TiledPattern::translate( const glm::vec3& t )
+	{
+		for( auto it : _traces )
+			it->translate( t );
+		for( auto it : _traces2 )
+			it->translate( t );
+	}
+
+	void TiledPattern::rotate( float rad )
+	{
+		for( auto it : _traces )
+			it->rotate( rad );
+		for( auto it : _traces2 )
+			it->rotate( rad );
+	}
+
+	void TiledPattern::rotate90CW()
+	{
+		for( auto it : _traces )
+			it->rotate90CW();
+		for( auto it : _traces2 )
+			it->rotate90CW();
+	}
+
+	void TiledPattern::rotate90CCW()
+	{
+		for( auto it : _traces )
+			it->rotate90CCW();
+		for( auto it : _traces2 )
+			it->rotate90CCW();
+	}
+
+	void TiledPattern::rotate180()
+	{
+		for( auto it : _traces )
+			it->rotate180();
+		for( auto it : _traces2 )
+			it->rotate180();
+
 	}
 
 

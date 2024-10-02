@@ -47,19 +47,19 @@ namespace TextileUX
 
 		virtual void draw();
 		virtual bool save();
-		/*
+
 		float getTotalRunLength() const;
 		size_t getTotalStitchCount() const;
 
-		const Trace& getTrace2() const { return _trace2; }
-		Trace& getTrace2() { return _trace2; }
+		//const Trace& getTrace2() const { return _trace2; }
+		//Trace& getTrace2() { return _trace2; }
 
 		virtual void translate( const glm::vec3& t );
 		virtual void rotate( float rad );
 
 		virtual void rotate90CW();
 		virtual void rotate90CCW();
-		virtual void rotate180();*/
+		virtual void rotate180();
 	};
 
 	class DiamondZigZagTiled : public TiledPattern

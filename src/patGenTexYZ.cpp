@@ -465,6 +465,9 @@ void display()
 
 						if( stitchProgress )
 						{
+							//TODO: adapt this code to support multiple lower and multiple upper traces
+
+							/*
 							int lower = min<int>( stitchProgress, pattern->getTrace().getStitchCount() );
 							int upper = max<int>( 0, stitchProgress - lower );
 
@@ -534,6 +537,7 @@ void display()
 								glVertex3fv( glm::value_ptr( verts.back() ) );
 								glEnd();
 							}
+							*/
 						}
 					}
 					glPopAttrib();
