@@ -15,6 +15,8 @@ namespace TextileUX
 
 		virtual bool validate();
 
+		bool findShortcuts();
+
 	public:
 		static glm::vec4 Color2;
 
@@ -22,6 +24,8 @@ namespace TextileUX
 		virtual ~DoublePattern();
 
 		bool correct();
+
+		virtual bool build( const PatternParamsBase *params );
 
 		virtual void draw();
 		virtual bool save();
@@ -46,6 +50,7 @@ namespace TextileUX
 		int _teeth;
 		float _dist;
 
+	protected:
 		virtual void updateSizeString();
 
 	public:
@@ -55,13 +60,11 @@ namespace TextileUX
 
 		private:
 			int _teeth;
-			float _dist;
 
 		public:
 			PatternParams() :
 				PatternParamsBase(),
-				_teeth( 5 ),
-				_dist( 1 )
+				_teeth( 10 )
 			{}
 
 			virtual bool drawUI();
@@ -76,14 +79,32 @@ namespace TextileUX
 		virtual std::string getFullName() const;
 	};
 
-	/*
 	class BoustrophedonDouble : public DoublePattern
 	{
 	private:
 		int _windings;
 		float _dist;
 
+	protected:
+		virtual void updateSizeString();
+
 	public:
+		class PatternParams : public PatternParamsBase
+		{
+			friend class BoustrophedonDouble;
+
+		private:
+			int _windings;
+
+		public:
+			PatternParams() :
+				PatternParamsBase(),
+				_windings( 10 )
+			{}
+
+			virtual bool drawUI();
+		};
+
 		BoustrophedonDouble();
 		virtual ~BoustrophedonDouble();
 
@@ -97,8 +118,25 @@ namespace TextileUX
 		int _turns;
 		float _dist;
 
-		bool _diagonalConnectors;
-		float _cellDist;
+	protected:
+		virtual void updateSizeString();
+
+	public:
+		class PatternParams : public PatternParamsBase
+		{
+			friend class MeanderDouble;
+
+		private:
+			int _turns;
+
+		public:
+			PatternParams() :
+				PatternParamsBase(),
+				_turns( 10 )
+			{}
+
+			virtual bool drawUI();
+		};
 
 	public:
 		MeanderDouble();
@@ -113,7 +151,26 @@ namespace TextileUX
 	private:
 		int _turns;
 		float _dist;
-		bool _linkable;
+
+	protected:
+		virtual void updateSizeString();
+
+	public:
+		class PatternParams : public PatternParamsBase
+		{
+			friend class SpiralDouble;
+
+		private:
+			int _turns;
+
+		public:
+			PatternParams() :
+				PatternParamsBase(),
+				_turns( 10 )
+			{}
+
+			virtual bool drawUI();
+		};
 
 	public:
 		SpiralDouble();
@@ -128,7 +185,27 @@ namespace TextileUX
 	private:
 		unsigned int _order;
 		float _dist;
-		bool _linkable;
+
+
+	protected:
+		virtual void updateSizeString();
+
+	public:
+		class PatternParams : public PatternParamsBase
+		{
+			friend class HilbertDouble;
+
+		private:
+			int _order;
+
+		public:
+			PatternParams() :
+				PatternParamsBase(),
+				_order( 4 )
+			{}
+
+			virtual bool drawUI();
+		};
 
 	public:
 		HilbertDouble();
@@ -138,23 +215,42 @@ namespace TextileUX
 		virtual std::string getFullName() const;
 	};
 
-	class PeanoDoule : public DoublePattern
+	class PeanoDouble : public DoublePattern
 	{
 	private:
 		unsigned int _order;
 		float _dist;
-		bool _linkable;
+
+	protected:
+		virtual void updateSizeString();
+
+	public:
+		class PatternParams : public PatternParamsBase
+		{
+			friend class PeanoDouble;
+
+		private:
+			int _order;
+
+		public:
+			PatternParams() :
+				PatternParamsBase(),
+				_order( 2 )
+			{}
+
+			virtual bool drawUI();
+		};
 
 		void recurse( int x, int y, int o, bool hFlip, bool vFlip, std::vector<glm::vec3>& verts );
 
 	public:
-		PeanoDoule();
-		virtual ~PeanoDoule();
+		PeanoDouble();
+		virtual ~PeanoDouble();
 
 		virtual bool build( const PatternParamsBase *params );
 		virtual std::string getFullName() const;
 	};
-
+	/*
 	class DiamondZigZagDouble : public DoublePattern
 	{
 	private:

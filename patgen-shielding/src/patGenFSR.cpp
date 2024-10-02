@@ -582,11 +582,11 @@ void display()
 				printText( "lower:", x0, y0 );
 				y0 += 15;
 
-				sprintf( tempStr, "  vert:   %d", pattern->getTrace().getVertexCount() );
+				sprintf( tempStr, "  vert:   %d", (int)pattern->getTrace().getVertexCount() );
 				printText( tempStr, x0, y0 );
 				y0 += 15;
 
-				sprintf( tempStr, "  stitches: %d", pattern->getTrace().getStitchCount() );
+				sprintf( tempStr, "  stitches: %d", (int) pattern->getTrace().getStitchCount() );
 				printText( tempStr, x0, y0 );
 				y0 += 15;
 
@@ -599,11 +599,11 @@ void display()
 				printText( "upper:", x0, y0 );
 				y0 += 15;
 
-				sprintf( tempStr, "  vert:   %d", pattern->getTrace2().getVertexCount() );
+				sprintf( tempStr, "  vert:   %d", (int) pattern->getTrace2().getVertexCount() );
 				printText( tempStr, x0, y0 );
 				y0 += 15;
 
-				sprintf( tempStr, "  stitches: %d", pattern->getTrace2().getStitchCount() );
+				sprintf( tempStr, "  stitches: %d", (int) pattern->getTrace2().getStitchCount() );
 				printText( tempStr, x0, y0 );
 				y0 += 15;
 
@@ -645,6 +645,19 @@ void display()
 		{
 			if( ImGui::BeginMenu( "File" ) )
 			{
+				if( ImGui::MenuItem( "Save", "F2" ) )
+				{
+					save();
+				}
+				if( ImGui::MenuItem( "Exit", "ESC" ) )
+				{
+					quit = true;
+				}
+				ImGui::EndMenu();
+			}
+
+			if( ImGui::BeginMenu( "Pattern" ) )
+			{
 				if( ImGui::BeginMenu( "Create" ) )
 				{
 					if( ImGui::MenuItem( "IDE" ) )
@@ -664,85 +677,105 @@ void display()
 							clearPattern();
 						}
 					}
-					/*
-					if( ImGui::MenuItem( "BoustrophedonCircle" ) )
+					if( ImGui::MenuItem( "Boustrophedon" ) )
 					{
 						clearPattern();
 
-						params = new BoustrophedonCircle::PatternParams();
-						pattern = new BoustrophedonCircle();
+						params = new BoustrophedonDouble::PatternParams();
+						pattern = new BoustrophedonDouble();
 						if( pattern->build( params ) )
 						{
 							pattern->setUnit( unit );
-							statusString = "created BoustrophedonCicle";
+							statusString = "created Boustrophedon";
 						}
 						else
 						{
-							statusString = "ERROR: creating BoustrophedonCicle failed";
+							statusString = "ERROR: creating Boustrophedon failed";
 							clearPattern();
 						}
 					}
-					if( ImGui::MenuItem( "BoustrophedonQuadOrtho" ) )
+					if( ImGui::MenuItem( "Meander" ) )
 					{
 						clearPattern();
 
-						params = new BoustrophedonQuadOrtho::PatternParams();
-						pattern = new BoustrophedonQuadOrtho();
+						params = new MeanderDouble::PatternParams();
+						pattern = new MeanderDouble();
 						if( pattern->build( params ) )
 						{
 							pattern->setUnit( unit );
-							statusString = "created BoustrophedonQuadOrtho";
+							statusString = "created Meander";
 						}
 						else
 						{
-							statusString = "ERROR: creating BoustrophedonQuadOrtho failed";
+							statusString = "ERROR: creating Meander failed";
 							clearPattern();
 						}
 					}
-					if( ImGui::MenuItem( "BoustrophedonQuadDiag" ) )
+					if( ImGui::MenuItem( "Spiral" ) )
 					{
 						clearPattern();
 
-						params = new BoustrophedonQuadDiag::PatternParams();
-						pattern = new BoustrophedonQuadDiag();
+						params = new SpiralDouble::PatternParams();
+						pattern = new SpiralDouble();
 						if( pattern->build( params ) )
 						{
 							pattern->setUnit( unit );
-							statusString = "created BoustrophedonQuadDiag";
+							statusString = "created Spiral";
 						}
 						else
 						{
-							statusString = "ERROR: creating BoustrophedonQuadDiag failed";
+							statusString = "ERROR: creating Spiral failed";
 							clearPattern();
 						}
 					}
-					if( ImGui::MenuItem( "BoustrophedonQuadDouble" ) )
+					if( ImGui::MenuItem( "Hilbert" ) )
 					{
 						clearPattern();
 
-						params = new BoustrophedonQuadDouble::PatternParams();
-						pattern = new BoustrophedonQuadDouble();
+						params = new HilbertDouble::PatternParams();
+						pattern = new HilbertDouble();
 						if( pattern->build( params ) )
 						{
 							pattern->setUnit( unit );
-							statusString = "created BoustrophedonQuadDouble";
+							statusString = "created Hilbert";
 						}
 						else
 						{
-							statusString = "ERROR: creating BoustrophedonQuadDouble failed";
+							statusString = "ERROR: creating Hilbert failed";
 							clearPattern();
 						}
 					}
-					*/
+					if( ImGui::MenuItem( "Peano" ) )
+					{
+						clearPattern();
+
+						params = new PeanoDouble::PatternParams();
+						pattern = new PeanoDouble();
+						if( pattern->build( params ) )
+						{
+							pattern->setUnit( unit );
+							statusString = "created Peano";
+						}
+						else
+						{
+							statusString = "ERROR: creating Peano failed";
+							clearPattern();
+						}
+					}
 					ImGui::EndMenu();
 				}
-				if( ImGui::MenuItem( "Save", "F2" ) )
 				{
-					save();
-				}
-				if( ImGui::MenuItem( "Exit", "ESC" ) )
-				{
-					quit = true;
+					ScopedImGuiDisable disable( !pattern );
+					if( ImGui::MenuItem( "Correct" ) )
+					{
+						if( pattern )
+						{
+							if( pattern->correct() )
+								std::cout << "corrected pattern issues" << std::endl;
+							else
+								std::cerr << "<error> failed to correct pattern issues" << std::endl;
+						}
+					}
 				}
 				ImGui::EndMenu();
 			}
