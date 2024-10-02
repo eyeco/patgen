@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Shared", "Shared.vcxitems",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PatGenFSR", "PatGenFSR.vcxproj", "{8E7ED8E3-3B14-456C-8AC9-05B98C9E1FBB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PatGenTexYZ", "PatGenTexYZ.vcxproj", "{B0FCC61C-A4B3-47FC-B59B-A62F2B9A9536}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -23,6 +25,10 @@ Global
 		{8E7ED8E3-3B14-456C-8AC9-05B98C9E1FBB}.Debug|x64.Build.0 = Debug|x64
 		{8E7ED8E3-3B14-456C-8AC9-05B98C9E1FBB}.Release|x64.ActiveCfg = Release|x64
 		{8E7ED8E3-3B14-456C-8AC9-05B98C9E1FBB}.Release|x64.Build.0 = Release|x64
+		{B0FCC61C-A4B3-47FC-B59B-A62F2B9A9536}.Debug|x64.ActiveCfg = Debug|x64
+		{B0FCC61C-A4B3-47FC-B59B-A62F2B9A9536}.Debug|x64.Build.0 = Debug|x64
+		{B0FCC61C-A4B3-47FC-B59B-A62F2B9A9536}.Release|x64.ActiveCfg = Release|x64
+		{B0FCC61C-A4B3-47FC-B59B-A62F2B9A9536}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -34,5 +40,6 @@ Global
 		Shared.vcxitems*{229540c7-4927-4ea4-af1a-1e877d921e97}*SharedItemsImports = 4
 		Shared.vcxitems*{506dabf8-ee43-459b-aa78-bf4bae496be7}*SharedItemsImports = 9
 		Shared.vcxitems*{8e7ed8e3-3b14-456c-8ac9-05b98c9e1fbb}*SharedItemsImports = 4
+		Shared.vcxitems*{b0fcc61c-a4b3-47fc-b59b-a62f2b9a9536}*SharedItemsImports = 4
 	EndGlobalSection
 EndGlobal

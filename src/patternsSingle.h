@@ -18,12 +18,9 @@ namespace TextileUX
 	public:
 		class PatternParams : public PatternParamsBase
 		{
-			friend class BoustrophedonCircle;
-
-		private:
+		public:
 			float _diameter;
 
-		public:
 			PatternParams() :
 				PatternParamsBase(),
 				_diameter( 10 )
@@ -59,14 +56,11 @@ namespace TextileUX
 	public:
 		class PatternParams : public PatternParamsBase
 		{
-			friend class SpiralCircle;
-
-		private:
+		public:
 			float _diameter;
 			float _innerDiameter;
 			float _innerJumpSize;
 
-		public:
 			PatternParams() :
 				PatternParamsBase(),
 				_diameter( 10 ),
@@ -97,12 +91,9 @@ namespace TextileUX
 	public:
 		class PatternParams : public PatternParamsBase
 		{
-			friend class BoustrophedonQuadOrtho;
-
-		private:
+		public:
 			float _width;
 
-		public:
 			PatternParams() :
 				PatternParamsBase(),
 				_width( 10 )
@@ -131,12 +122,9 @@ namespace TextileUX
 	public:
 		class PatternParams : public PatternParamsBase
 		{
-			friend class BoustrophedonQuadDiag;
-
-		private:
+		public:
 			float _width;
 
-		public:
 			PatternParams() :
 				PatternParamsBase(),
 				_width( 10 )
@@ -165,13 +153,10 @@ namespace TextileUX
 	public:
 		class PatternParams : public PatternParamsBase
 		{
-			friend class BoustrophedonQuadDouble;
-
-		private:
+		public:
 			float _width;
 			int _jumpMult;
 
-		public:
 			PatternParams() :
 				PatternParamsBase(),
 				_width( 10 ),

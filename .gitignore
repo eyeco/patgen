@@ -1,0 +1,10 @@
+prj/int/
+prj/.vs/
+imgui.ini
+*.svg
+bin/**/*.exe
+bin/**/*.pdb
+bin/**/*.ilk
+bin/**/*.iobj
+bin/**/*.ipdb
+config.json

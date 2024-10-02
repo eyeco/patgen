@@ -11,27 +11,27 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\patGenFSR.cpp" />
+    <ClCompile Include="..\src\patGenTexYZ.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{8E7ED8E3-3B14-456C-8AC9-05B98C9E1FBB}</ProjectGuid>
+    <ProjectGuid>{B0FCC61C-A4B3-47FC-B59B-A62F2B9A9536}</ProjectGuid>
     <RootNamespace>DepthCalibration</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>PatGenFSR</ProjectName>
+    <ProjectName>PatGenTexYZ</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings" />
@@ -68,7 +68,7 @@
       <EnableParallelCodeGeneration>
       </EnableParallelCodeGeneration>
       <PreprocessorDefinitions>GLM_FORCE_SWIZZLE;GLM_ENABLE_EXPERIMENTAL;USE_GLUT;IMGUI_IMPL_OPENGL_LOADER_GLEW;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;WIN32;_CONSOLE;NOMINMAX;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=NTDDI_WIN7;_DEBUG</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src;$(ProjectDir)..\..\3rdparty\glm-0.9.9.3\include;$(ProjectDir)..\..\3rdparty\glew-2.1.0-1\include;$(ProjectDir)..\..\3rdparty\cxxopts-3.2.0\include;$(ProjectDir)..\..\3rdparty\freeglut-3.0.0-5\include;$(ProjectDir)..\..\3rdparty\nlohmann-json-3.5.0-5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\src;$(ProjectDir)..\3rdparty\glm-0.9.9.3\include;$(ProjectDir)..\3rdparty\glew-2.1.0-1\include;$(ProjectDir)..\3rdparty\cxxopts-3.2.0\include;$(ProjectDir)..\3rdparty\freeglut-3.0.0-5\include;$(ProjectDir)..\3rdparty\nlohmann-json-3.5.0-5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>
       </MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -76,7 +76,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\..\3rdparty\glew-2.1.0-1\lib\msvc\$(PlatformName)\$(Configuration);$(ProjectDir)..\..\3rdparty\freeglut-3.0.0-5\lib\msvc\$(PlatformName)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\3rdparty\glew-2.1.0-1\lib\msvc\$(PlatformName)\$(Configuration);$(ProjectDir)..\3rdparty\freeglut-3.0.0-5\lib\msvc\$(PlatformName)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>freeglut.lib;OpenGL32.lib;glew32d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>
@@ -100,7 +100,7 @@
       <EnableParallelCodeGeneration>
       </EnableParallelCodeGeneration>
       <PreprocessorDefinitions>GLM_FORCE_SWIZZLE;GLM_ENABLE_EXPERIMENTAL;USE_GLUT;IMGUI_IMPL_OPENGL_LOADER_GLEW;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;WIN32;_CONSOLE;NOMINMAX;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=NTDDI_WIN7;NDEBUG</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src;$(ProjectDir)..\..\3rdparty\glm-0.9.9.3\include;$(ProjectDir)..\..\3rdparty\glew-2.1.0-1\include;$(ProjectDir)..\..\3rdparty\cxxopts-3.2.0\include;$(ProjectDir)..\..\3rdparty\freeglut-3.0.0-5\include;$(ProjectDir)..\..\3rdparty\nlohmann-json-3.5.0-5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\src;$(ProjectDir)..\3rdparty\glm-0.9.9.3\include;$(ProjectDir)..\3rdparty\glew-2.1.0-1\include;$(ProjectDir)..\3rdparty\cxxopts-3.2.0\include;$(ProjectDir)..\3rdparty\freeglut-3.0.0-5\include;$(ProjectDir)..\3rdparty\nlohmann-json-3.5.0-5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <OpenMPSupport>true</OpenMPSupport>
       <LanguageStandard>stdcpplatest</LanguageStandard>
@@ -109,7 +109,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\..\3rdparty\glew-2.1.0-1\lib\msvc\$(PlatformName)\$(Configuration);$(ProjectDir)..\..\3rdparty\freeglut-3.0.0-5\lib\msvc\$(PlatformName)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\3rdparty\glew-2.1.0-1\lib\msvc\$(PlatformName)\$(Configuration);$(ProjectDir)..\3rdparty\freeglut-3.0.0-5\lib\msvc\$(PlatformName)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>freeglut.lib;OpenGL32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>

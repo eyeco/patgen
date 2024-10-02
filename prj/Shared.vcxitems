@@ -66,6 +66,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)..\src\pattern.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\src\patternsDouble.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\src\patternsSingle.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\patternsTiled.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\src\program.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\src\shader.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\src\trackball.cpp" />
@@ -127,6 +128,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\src\pattern.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\src\patternsDouble.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\src\patternsSingle.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\patternsTiled.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\src\program.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\src\shader.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\src\trackball.h" />

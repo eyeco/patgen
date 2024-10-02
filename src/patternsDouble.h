@@ -15,7 +15,7 @@ namespace TextileUX
 
 		virtual bool validate();
 
-		bool findShortcuts();
+		virtual bool findShortcuts();
 
 	public:
 		static glm::vec4 Color2;
@@ -23,7 +23,7 @@ namespace TextileUX
 		DoublePattern( const std::string& name );
 		virtual ~DoublePattern();
 
-		bool correct();
+		virtual bool correct();
 
 		virtual bool build( const PatternParamsBase *params );
 
@@ -56,12 +56,9 @@ namespace TextileUX
 	public:
 		class PatternParams : public PatternParamsBase
 		{
-			friend class IDEDouble;
-
-		private:
+		public:
 			int _teeth;
 
-		public:
 			PatternParams() :
 				PatternParamsBase(),
 				_teeth( 10 )
@@ -91,12 +88,9 @@ namespace TextileUX
 	public:
 		class PatternParams : public PatternParamsBase
 		{
-			friend class BoustrophedonDouble;
-
-		private:
+		public:
 			int _windings;
 
-		public:
 			PatternParams() :
 				PatternParamsBase(),
 				_windings( 10 )
@@ -124,12 +118,9 @@ namespace TextileUX
 	public:
 		class PatternParams : public PatternParamsBase
 		{
-			friend class MeanderDouble;
-
-		private:
+		public:
 			int _turns;
 
-		public:
 			PatternParams() :
 				PatternParamsBase(),
 				_turns( 10 )
@@ -158,12 +149,9 @@ namespace TextileUX
 	public:
 		class PatternParams : public PatternParamsBase
 		{
-			friend class SpiralDouble;
-
-		private:
+		public:
 			int _turns;
 
-		public:
 			PatternParams() :
 				PatternParamsBase(),
 				_turns( 10 )
@@ -193,12 +181,9 @@ namespace TextileUX
 	public:
 		class PatternParams : public PatternParamsBase
 		{
-			friend class HilbertDouble;
-
-		private:
+		public:
 			int _order;
 
-		public:
 			PatternParams() :
 				PatternParamsBase(),
 				_order( 4 )
@@ -227,12 +212,9 @@ namespace TextileUX
 	public:
 		class PatternParams : public PatternParamsBase
 		{
-			friend class PeanoDouble;
-
-		private:
+		public:
 			int _order;
 
-		public:
 			PatternParams() :
 				PatternParamsBase(),
 				_order( 2 )

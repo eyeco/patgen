@@ -108,6 +108,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)..\src\patternsDouble.cpp">
       <Filter>patterns</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\src\patternsTiled.cpp">
+      <Filter>patterns</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\src\program.h">
@@ -196,6 +199,9 @@
       <Filter>patterns</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\src\patternsSingle.h">
+      <Filter>patterns</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\src\patternsTiled.h">
       <Filter>patterns</Filter>
     </ClInclude>
   </ItemGroup>
