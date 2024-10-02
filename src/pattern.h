@@ -22,12 +22,13 @@ namespace TextileUX
 		VertexBuffer _vbStitches;
 
 		bool resample();
-		bool rebuildVBOs();
 
 	public:
 		explicit Trace( const glm::vec4 &color );
+		Trace( const Trace& t );
 
 		void draw();
+		bool rebuildVBOs();
 
 		bool validate();
 
@@ -46,8 +47,8 @@ namespace TextileUX
 		bool removeStitch( int index );
 		bool removeStitches( std::vector<int> indices );
 
-		std::vector<glm::vec3> &getVerts() { return _verts; }
-		const std::vector<glm::vec3> &getVerts() const { return _verts; }
+		//std::vector<glm::vec3> &getVerts() { return _verts; }
+		//const std::vector<glm::vec3> &getVerts() const { return _verts; }
 
 		std::vector<glm::vec3> &getStitches() { return _stitches; }
 		const std::vector<glm::vec3> &getStitches() const { return _stitches; }

@@ -21,16 +21,21 @@ namespace TextileUX
 
 		virtual bool drawUI();
 	};
-	/*
+
 	class TiledPattern : public DoublePattern
 	{
 	protected:
 
-		//virtual void clear();
+		virtual void clear();
 
 		//virtual bool validate();
 
+		std::vector<Trace*> _traces;	//all lower traces
+		std::vector<Trace*> _traces2;	//all upper traces
+
 		virtual bool findShortcuts();
+
+		void swipeTraces();
 
 	public:
 		TiledPattern( const std::string& name );
@@ -38,11 +43,11 @@ namespace TextileUX
 
 		virtual bool correct() { return true; }
 
-		virtual bool build( const PatternParamsBase *params );
+		//virtual bool build( const PatternParamsBase *params );
 
 		virtual void draw();
 		virtual bool save();
-
+		/*
 		float getTotalRunLength() const;
 		size_t getTotalStitchCount() const;
 
@@ -54,7 +59,7 @@ namespace TextileUX
 
 		virtual void rotate90CW();
 		virtual void rotate90CCW();
-		virtual void rotate180();
+		virtual void rotate180();*/
 	};
 
 	class DiamondZigZagTiled : public TiledPattern
@@ -63,7 +68,7 @@ namespace TextileUX
 		unsigned int _windings;
 		float _dist;
 
-		float _cellDist;
+		float _tileDist;
 
 	protected:
 		virtual void updateSizeString();
@@ -71,12 +76,9 @@ namespace TextileUX
 	public:
 		class PatternParams : public TiledPatternParams
 		{
-			friend class DiamondZigZagTiled;
-
-		private:
+		public:
 			int _windings;
 
-		public:
 			PatternParams() :
 				TiledPatternParams(),
 				_windings( 10 )

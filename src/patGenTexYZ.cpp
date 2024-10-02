@@ -16,7 +16,7 @@
 #include <iniFile.h>
 
 #include <pattern.h>
-#include <patternsDouble.h>
+#include <patternsTiled.h>
 
 #include <trackball.h>
 #include <vertexBuffer.h>
@@ -658,24 +658,23 @@ void display()
 
 			if( ImGui::BeginMenu( "Pattern" ) )
 			{
-				/*
-				if( ImGui::MenuItem( "IDE" ) )
+				if( ImGui::MenuItem( "Diamond Zigzag" ) )
 				{
 					clearPattern();
 
-					params = new IDEDouble::PatternParams();
-					pattern = new IDEDouble();
+					params = new DiamondZigZagTiled::PatternParams();
+					pattern = new DiamondZigZagTiled();
 					if( pattern->build( params ) )
 					{
 						pattern->setUnit( unit );
-						statusString = "created IDE";
+						statusString = "created Diamond Zigzag";
 					}
 					else
 					{
-						statusString = "ERROR: creating IDE failed";
+						statusString = "ERROR: creating Diamond Zigzag failed";
 						clearPattern();
 					}
-				}
+				}/*
 				if( ImGui::MenuItem( "Boustrophedon" ) )
 				{
 					clearPattern();

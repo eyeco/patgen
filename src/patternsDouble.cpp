@@ -387,10 +387,6 @@ namespace TextileUX
 		else
 			_trace.insertBack( glm::vec3( ( i - 1 ) * _dist - w * 0.5f, -h * 0.5f, 0 ) );
 
-
-		if( !_trace2.rebuild( params->_jumpSize, params->_minJumpSize ) )
-			return false;
-
 		return DoublePattern::build( params );
 	}
 

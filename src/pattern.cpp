@@ -18,6 +18,19 @@ namespace TextileUX
 		_vbStitches( "stitches" )
 	{}
 
+	Trace::Trace( const Trace& t ) :
+		_color( t._color ),
+		_verts( t._verts ),
+		_stitches( t._stitches ),
+		_jumpSize( t._jumpSize ),
+		_minJumpSize( t._minJumpSize ),
+		_runLength( t._runLength ),
+		_vbPath( "path" ),
+		_vbStitches( "stitches" )
+	{
+		rebuildVBOs();
+	}
+
 	void Trace::clear()
 	{
 		_verts.clear();
