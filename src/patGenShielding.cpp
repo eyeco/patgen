@@ -51,6 +51,9 @@ using namespace TextileUX;
 #define KEY_RETURN	13
 #define KEY_ESC		27
 
+#define WINDOW_DECORATION_OFFSET_X 8
+#define WINDOW_DECORATION_OFFSET_Y 31
+
 
 #ifdef USE_GLUT
 int glutWindowID = -1;
@@ -78,6 +81,9 @@ Pattern *pattern = nullptr;
 int stitchProgress = 0;
 
 Trackball2D trackball( zero(), 0.0f, -2.5 );
+
+IniFile* ini = nullptr;
+char imGuiIniFileName[1024];
 
 std::string statusString( "ready" );
 
@@ -323,16 +329,6 @@ void keyDown( int key )
 	switch( key )
 	{
 	case SDLK_SPACE:
-		if( !cfg.playbackMode )
-		{
-			//TODO: fix recording (after adding COM input)
-			/*
-			if( isRecording )
-				stopRecording();
-			else
-				startRecording();
-			*/
-		}
 		break;
 	case SDLK_PLUS:
 	case SDLK_KP_PLUS:
@@ -420,7 +416,8 @@ void update()
 void display()
 {
 #ifdef USE_GLUT
-
+	windowX = glutGet( (GLenum) GLUT_WINDOW_X ) - WINDOW_DECORATION_OFFSET_X;
+	windowY = glutGet( (GLenum) GLUT_WINDOW_Y ) - WINDOW_DECORATION_OFFSET_Y;
 #else
 	SDL_GetWindowSize( mainWindow, &windowWidth, &windowHeight );
 #endif
@@ -750,7 +747,8 @@ void idle()
 
 void moved( int x, int y )
 {
-//	std::cout << "moved to: " << x << ", " << y << std::endl;
+	windowX = x;
+	windowY = y;
 }
 
 void sizeChanged( int width, int height )
@@ -790,6 +788,11 @@ void initImGui()
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void) io;
+
+	std::string temp = getAppName() + ".imgui.ini";
+	strcpy_s( imGuiIniFileName, temp.c_str() );
+
+	io.IniFilename = imGuiIniFileName;
 
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
@@ -982,6 +985,66 @@ void initGL( int argc, char **argv )
 		grids[i] = VertexBuffer::createGrid( glm::vec2( 10.0f ), ( 10 * pow( 2, ( i ) ) ) - 1, glm::vec3( 0.2f, 0.3f, 0.5f ) * 0.5f );
 }
 
+
+void readIni()
+{
+	ini = new IniFile( getAppName() + ".ini" );
+	if( !ini->read() )
+		std::cerr << "<warning> failed to read window.ini" << std::endl;
+	else
+	{
+		IniFile::Section* w = ini->tryGet( "window" );
+		if( w )
+		{
+			w->tryGet<int>( "posX", windowX );
+			w->tryGet<int>( "posY", windowY );
+
+			w->tryGet<int>( "width", windowWidth );
+			w->tryGet<int>( "height", windowHeight );
+		}
+
+		IniFile::Section* c = ini->tryGet( "trackball" );
+		if( c )
+		{
+			glm::vec3 t;
+			float r = 0;
+			float s = 0;
+			c->tryGet<glm::vec3>( "t", t );
+			//c->tryGet<float>( "r", r );
+			c->tryGet<float>( "s", s );
+
+			trackball = Trackball2D( t, r, s, true );
+		}
+
+		IniFile::Section* a = ini->tryGet( "app" );
+		if( a )
+		{
+			//a->tryGet<bool>( "autosave", _autoSave );
+		}
+	}
+}
+
+void saveIni()
+{
+	if( ini )
+	{
+		( *ini )["window"].set( "posX", windowX );
+		( *ini )["window"].set( "posY", windowY );
+
+		( *ini )["window"].set( "width", windowWidth );
+		( *ini )["window"].set( "height", windowHeight );
+
+		( *ini )["trackball"].set( "t", trackball.getTranslation() );
+		//( *ini )["trackball"].set( "r", trackball.getRotation() );
+		( *ini )["trackball"].set( "s", trackball.getScale() );
+
+		//( *_ini )["app"].set( "autosave", _autoSave );
+
+		if( !ini->write() )
+			std::cerr << "<error> failed to write window.ini" << std::endl;
+	}
+}
+
 void cleanup()
 {
 	if( cleaned )
@@ -1025,6 +1088,9 @@ void cleanup()
 	TTF_Quit();
 	SDL_Quit();
 #endif
+
+	saveIni();
+	safeDelete( ini );
 }
 
 
@@ -1055,8 +1121,11 @@ int main( int argc, char **argv )
 
 		disbleQuickEditMode();
 		
+		setArg0( argv[0] );
+
 		if( StartupConfig::readPA( argc, argv, cfg ) )
 		{
+			readIni();
 			initGL( argc, argv );
 
 #ifdef USE_GLUT

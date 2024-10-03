@@ -1,6 +1,6 @@
 prj/int/
 prj/.vs/
-imgui.ini
+*.ini
 *.svg
 bin/**/*.exe
 bin/**/*.pdb

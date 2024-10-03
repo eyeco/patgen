@@ -33,26 +33,6 @@ namespace TextileUX
 				return value;
 			}
 
-			template<>
-			std::string convert<std::string>( const std::string &s ) const
-			{
-				return s;
-			}
-
-			template<>
-			bool convert<bool>( const std::string &s ) const
-			{
-				std::string str( s );
-				trim( str );
-				
-				if( !_stricmp( s.c_str(), "false" ) || !_stricmp( s.c_str(), "0" ) || !_stricmp( s.c_str(), "low" ) )
-					return false;
-				else if( !_stricmp( s.c_str(), "true" ) || !_stricmp( s.c_str(), "1" ) || !_stricmp( s.c_str(), "high" ) )
-					return true;
-
-				throw std::runtime_error( "could not parse to bool value" );
-			}
-
 		public:
 			explicit Section( const std::string &name ) :
 				name( name )
@@ -121,4 +101,10 @@ namespace TextileUX
 			return *this->get( name );
 		}
 	};
+
+	template<> std::string IniFile::Section::convert<std::string>( const std::string& s ) const;
+	template<> bool IniFile::Section::convert<bool>( const std::string& s ) const;
+	template<> glm::vec3 IniFile::Section::get( const std::string& name ) const;
+	template<> bool IniFile::Section::tryGet<glm::vec3>( const std::string& name, glm::vec3& m ) const;
+	template<> void IniFile::Section::set<glm::vec3>( const std::string& name, const glm::vec3& m );
 }

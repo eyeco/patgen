@@ -5,6 +5,8 @@
 #include <iostream>
 #include <filesystem>
 
+#include <glm/gtc/type_ptr.hpp>
+
 namespace TextileUX
 {
 	void IniFile::Section::write( std::fstream &file )
@@ -106,5 +108,100 @@ namespace TextileUX
 			it->second->write( file );
 
 		return true;
+	}
+
+	template<>
+	std::string IniFile::Section::convert<std::string>( const std::string& s ) const
+	{
+		return s;
+	}
+
+	template<>
+	bool IniFile::Section::convert<bool>( const std::string& s ) const
+	{
+		std::string str( s );
+		trim( str );
+
+		if( !_stricmp( s.c_str(), "false" ) || !_stricmp( s.c_str(), "0" ) || !_stricmp( s.c_str(), "low" ) )
+			return false;
+		else if( !_stricmp( s.c_str(), "true" ) || !_stricmp( s.c_str(), "1" ) || !_stricmp( s.c_str(), "high" ) )
+			return true;
+
+		throw std::runtime_error( "could not parse to bool value" );
+	}
+
+	template<>
+	glm::vec3 IniFile::Section::get( const std::string& name ) const
+	{
+		glm::vec3 v;
+
+		auto it = entries.find( name );
+		if( it == entries.end() )
+			return v;
+
+		std::string str( it->second );
+		trim( str );
+
+		/*
+		size_t pos1 = str.find_first_of('[');
+		size_t pos2 = str.find_last_of(']', pos1);
+
+		if( pos1 == std::string::npos || pos2 == std::string::npos )
+			return v;
+
+		str = str.substr( pos1 + 1, pos2 - pos1 - 1 );
+		*/
+
+		std::vector<std::string> values = split( str, ',' );
+		if( values.size() < 3 )
+			return v;
+
+		float* f = glm::value_ptr( v );
+		for( int i = 0; i < 3; i++ )
+			*( f++ ) = atof( values[i].c_str() );
+
+		return v;
+	}
+
+	template<>
+	bool IniFile::Section::tryGet<glm::vec3>( const std::string& name, glm::vec3& v ) const
+	{
+		auto it = entries.find( name );
+		if( it == entries.end() )
+			return false;
+
+		std::string str( it->second );
+		trim( str );
+
+		/*
+		size_t pos1 = str.find_first_of( '[' );
+		size_t pos2 = str.find_last_of( ']', pos1 );
+
+		if( pos1 == std::string::npos || pos2 == std::string::npos )
+			return false;
+
+		str = str.substr( pos1 + 1, pos2 - pos1 - 1 );
+		*/
+
+		std::vector<std::string> values = split( str, ',' );
+		if( values.size() < 3 )
+			return false;
+
+		float* f = glm::value_ptr( v );
+		for( int i = 0; i < 3; i++ )
+			*( f++ ) = atof( values[i].c_str() );
+
+		return true;
+	}
+
+	template<>
+	void IniFile::Section::set<glm::vec3>( const std::string& name, const glm::vec3& v )
+	{
+		const float* f = glm::value_ptr( v );
+		std::stringstream sstr;
+		for( int i = 0; i < 3; i++ )
+			sstr << *( f++ ) << ",";
+
+		entries[name] = sstr.str();
 	}
 }

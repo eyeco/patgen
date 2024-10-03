@@ -156,6 +156,9 @@ namespace TextileUX
 
 	bool endsWith( const std::string &s, const std::string &end );
 
+	void setArg0( const char* arg0 );
+	const std::string& getAppName();
+
 	template<size_t S>
 	void makeDateTimeString( char( &str )[S], time_t time, bool fileSafe = false )
 	{

@@ -10,6 +10,7 @@
 #include <iostream>
 #include <algorithm>
 #include <functional>
+#include <filesystem>
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui/imgui_internal.h>
@@ -269,6 +270,25 @@ namespace TextileUX
 		if( s.length() < end.length() )
 			return false;
 		return ( s.compare( s.length() - end.length(), end.length(), end ) == 0 );
+	}
+
+	std::string appName;
+	void setArg0( const char *arg0 )
+	{
+		std::filesystem::path p( arg0 );
+		appName = p.filename().replace_extension().string();
+
+#ifdef _DEBUG
+		std::string temp( appName );
+		toLower( temp );
+		if( endsWith( temp, "_d" ) )
+			appName = appName.substr( 0, appName.size() - 2 );
+#endif
+	}
+
+	const std::string &getAppName()
+	{
+		return appName;
 	}
 
 

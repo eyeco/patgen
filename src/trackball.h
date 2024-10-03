@@ -76,6 +76,10 @@ namespace TextileUX
 		~Trackball2D();
 
 		virtual void reset();
+
+		const glm::vec3& getTranslation() const { return _trans; }
+		const float getScale() const { return _scale; }
+		const float getRotation() const { return _rotation; }
 	};
 
 	class Trackball3D : public Trackball
