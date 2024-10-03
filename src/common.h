@@ -85,7 +85,7 @@ namespace TextileUX
 		}
 	}
 
-	//custom min function since std::min produced slow code on vc++
+	//custom min function since std::min produced slow code in vc++
 	// http://randomascii.wordpress.com/2013/11/24/stdmin-causing-three-times-slowdown-on-vc/
 	template<typename T>
 	inline const T min( const T left, const T right )
@@ -93,7 +93,7 @@ namespace TextileUX
 		return ( right < left ? right : left );
 	}
 
-	//custom max function since std::max produced slow code on vc++
+	//custom max function since std::max produced slow code in vc++
 	// http://randomascii.wordpress.com/2013/11/24/stdmin-causing-three-times-slowdown-on-vc/
 	template<typename T>
 	inline const T max( const T left, const T right )

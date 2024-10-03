@@ -7,15 +7,15 @@ namespace TextileUX
 	class TiledPatternParams : public PatternParamsBase
 	{
 	public:
-		int _tilesX;
-		int _tilesY;
-		float _tileDist;
+		int _cellsX;
+		int _cellsY;
+		float _cellDist;
 
 		TiledPatternParams() :
 			PatternParamsBase(),
-			_tilesX( 2 ),
-			_tilesY( 2 ),
-			_tileDist( 1 )
+			_cellsX( 2 ),
+			_cellsY( 2 ),
+			_cellDist( 1 )
 		{}
 		virtual ~TiledPatternParams() {}
 
@@ -61,7 +61,7 @@ namespace TextileUX
 		unsigned int _windings;
 		float _dist;
 
-		float _tileDist;
+		float _cellDist;
 
 	protected:
 		virtual void updateSizeString();
@@ -94,7 +94,7 @@ namespace TextileUX
 		unsigned int _turns;
 		float _dist;
 
-		float _tileDist;
+		float _cellDist;
 
 	protected:
 		virtual void updateSizeString();
@@ -120,8 +120,41 @@ namespace TextileUX
 		virtual bool build( const PatternParamsBase *params );
 		virtual std::string getFullName() const;
 	};
-	/*
-	class AntennaDouble : public TiledPattern
+
+	class MeanderTiled : public TiledPattern
+	{
+	private:
+		unsigned int _turns;
+		float _dist;
+
+		float _cellDist;
+
+	protected:
+		virtual void updateSizeString();
+
+	public:
+		class PatternParams : public TiledPatternParams
+		{
+		public:
+			int _turns;
+
+			PatternParams() :
+				TiledPatternParams(),
+				_turns( 4 )
+			{}
+
+			virtual bool drawUI();
+		};
+
+	public:
+		MeanderTiled();
+		~MeanderTiled();
+
+		virtual bool build( const PatternParamsBase* params );
+		virtual std::string getFullName() const;
+	};
+	
+	class AntennaTiled : public TiledPattern
 	{
 	private:
 		unsigned int _order;
@@ -129,12 +162,61 @@ namespace TextileUX
 
 		float _cellDist;
 
+	protected:
+		virtual void updateSizeString();
+
 	public:
-		AntennaDouble();
-		~AntennaDouble();
+		class PatternParams : public TiledPatternParams
+		{
+		public:
+			int _order;
+
+			PatternParams() :
+				TiledPatternParams(),
+				_order( 5 )
+			{}
+
+			virtual bool drawUI();
+		};
+
+	public:
+		AntennaTiled();
+		~AntennaTiled();
 
 		virtual bool build( const PatternParamsBase *params );
 		virtual std::string getFullName() const;
 	};
-	*/
+
+	class FlowerTiled : public TiledPattern
+	{
+	private:
+		unsigned int _turns;
+		float _dist;
+
+		float _cellDist;
+
+	protected:
+		virtual void updateSizeString();
+
+	public:
+		class PatternParams : public TiledPatternParams
+		{
+		public:
+			int _turns;
+
+			PatternParams() :
+				TiledPatternParams(),
+				_turns( 4 )
+			{}
+
+			virtual bool drawUI();
+		};
+
+	public:
+		FlowerTiled();
+		~FlowerTiled();
+
+		virtual bool build( const PatternParamsBase* params );
+		virtual std::string getFullName() const;
+	};
 }

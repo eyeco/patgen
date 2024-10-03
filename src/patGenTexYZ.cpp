@@ -77,6 +77,8 @@ PatternParamsBase *params = nullptr;
 DoublePattern *pattern = nullptr;
 int stitchProgress = 0;
 
+//TODO: save trackball status to ini file at shutdown and read at startup
+//TODO: provide "Reset" via View menu item
 Trackball2D trackball( zero(), 0.0f, -2.5 );
 
 std::string statusString( "ready" );
@@ -275,6 +277,8 @@ void mouse( int button, int state, int x, int y )
 
 	if( !imGuiHandled )
 		trackball.onMouse( button, state, x, y );
+
+	//TODO: implement crosshair with display of x/y in info
 }
 
 void mouseWheel( int wheel, int direction, int x, int y )
@@ -695,17 +699,17 @@ void display()
 						statusString = "ERROR: creating Diamond Spiral failed";
 						clearPattern();
 					}
-				}/*
+				}
 				if( ImGui::MenuItem( "Meander" ) )
 				{
 					clearPattern();
 
-					params = new MeanderDouble::PatternParams();
-					pattern = new MeanderDouble();
+					params = new MeanderTiled::PatternParams();
+					pattern = new MeanderTiled();
 					if( pattern->build( params ) )
 					{
 						pattern->setUnit( unit );
-						statusString = "created Meander";
+						statusString = "created Meanderl";
 					}
 					else
 					{
@@ -713,23 +717,40 @@ void display()
 						clearPattern();
 					}
 				}
-				if( ImGui::MenuItem( "Spiral" ) )
+				if( ImGui::MenuItem( "Antenna" ) )
 				{
 					clearPattern();
 
-					params = new SpiralDouble::PatternParams();
-					pattern = new SpiralDouble();
+					params = new AntennaTiled::PatternParams();
+					pattern = new AntennaTiled();
 					if( pattern->build( params ) )
 					{
 						pattern->setUnit( unit );
-						statusString = "created Spiral";
+						statusString = "created Antenna";
 					}
 					else
 					{
-						statusString = "ERROR: creating Spiral failed";
+						statusString = "ERROR: creating Antenna failed";
 						clearPattern();
 					}
 				}
+				if( ImGui::MenuItem( "Flower" ) )
+				{
+					clearPattern();
+
+					params = new FlowerTiled::PatternParams();
+					pattern = new FlowerTiled();
+					if( pattern->build( params ) )
+					{
+						pattern->setUnit( unit );
+						statusString = "created Flower";
+					}
+					else
+					{
+						statusString = "ERROR: creating Flower failed";
+						clearPattern();
+					}
+				}/*
 				if( ImGui::MenuItem( "Hilbert" ) )
 				{
 					clearPattern();
@@ -1073,7 +1094,9 @@ void initGL( int argc, char **argv )
 
 	moved( windowX, windowY );
 	sizeChanged( windowWidth, windowHeight );
+	//TODO: save at shutdown and then read previous width/heigth from ini
 
+	//TODO: provide variable grid spacing via View menu item
 	for( int i = 0; i < grids.size(); i++ )
 		grids[i] = VertexBuffer::createGrid( glm::vec2( 10.0f ), ( 10 * pow( 2, ( i ) ) ) - 1, glm::vec3( 0.2f, 0.3f, 0.5f ) * 0.5f );
 }
