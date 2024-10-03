@@ -678,24 +678,24 @@ void display()
 						statusString = "ERROR: creating Diamond Zigzag failed";
 						clearPattern();
 					}
-				}/*
-				if( ImGui::MenuItem( "Boustrophedon" ) )
+				}
+				if( ImGui::MenuItem( "Diamond Spiral" ) )
 				{
 					clearPattern();
 
-					params = new BoustrophedonDouble::PatternParams();
-					pattern = new BoustrophedonDouble();
+					params = new DiamondSpiralTiled::PatternParams();
+					pattern = new DiamondSpiralTiled();
 					if( pattern->build( params ) )
 					{
 						pattern->setUnit( unit );
-						statusString = "created Boustrophedon";
+						statusString = "created Diamond Spiral";
 					}
 					else
 					{
-						statusString = "ERROR: creating Boustrophedon failed";
+						statusString = "ERROR: creating Diamond Spiral failed";
 						clearPattern();
 					}
-				}
+				}/*
 				if( ImGui::MenuItem( "Meander" ) )
 				{
 					clearPattern();

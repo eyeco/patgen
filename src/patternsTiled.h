@@ -28,8 +28,6 @@ namespace TextileUX
 
 		virtual void clear();
 
-		//virtual bool validate();
-
 		std::vector<Trace*> _traces;	//all lower traces
 		std::vector<Trace*> _traces2;	//all upper traces
 
@@ -43,16 +41,11 @@ namespace TextileUX
 
 		virtual bool correct() { return true; }
 
-		//virtual bool build( const PatternParamsBase *params );
-
 		virtual void draw();
 		virtual bool save();
 
 		float getTotalRunLength() const;
 		size_t getTotalStitchCount() const;
-
-		//const Trace& getTrace2() const { return _trace2; }
-		//Trace& getTrace2() { return _trace2; }
 
 		virtual void translate( const glm::vec3& t );
 		virtual void rotate( float rad );
@@ -94,23 +87,40 @@ namespace TextileUX
 		virtual bool build( const PatternParamsBase *params );
 		virtual std::string getFullName() const;
 	};
-	/*
-	class DiamondSpiralDouble : public TiledPattern
+
+	class DiamondSpiralTiled : public TiledPattern
 	{
 	private:
 		unsigned int _turns;
 		float _dist;
 
-		float _cellDist;
+		float _tileDist;
+
+	protected:
+		virtual void updateSizeString();
 
 	public:
-		DiamondSpiralDouble();
-		~DiamondSpiralDouble();
+		class PatternParams : public TiledPatternParams
+		{
+		public:
+			int _turns;
+
+			PatternParams() :
+				TiledPatternParams(),
+				_turns( 10 )
+			{}
+
+			virtual bool drawUI();
+		};
+
+	public:
+		DiamondSpiralTiled();
+		~DiamondSpiralTiled();
 
 		virtual bool build( const PatternParamsBase *params );
 		virtual std::string getFullName() const;
 	};
-
+	/*
 	class AntennaDouble : public TiledPattern
 	{
 	private:
