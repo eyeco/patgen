@@ -55,14 +55,14 @@ namespace TextileUX
 		float _rotation;
 		float _rotationSpeed;
 
-		float _scale;
+		float _scaleExp;
 		float _scaleSpeed;
 		float _wheelSpeed;
-		float _scalePow;
+		float _scaleBase;
 
 		glm::vec3 _defaultTrans;
 		float _defaultRotation;
-		float _defaultScale;
+		float _defaultScaleExp;
 
 		bool _lockRotation;
 
@@ -78,8 +78,8 @@ namespace TextileUX
 		virtual void reset();
 
 		const glm::vec3& getTranslation() const { return _trans; }
-		const float getScale() const { return _scale; }
-		const float getRotation() const { return _rotation; }
+		float getRotation() const { return _rotation; }
+		float getScaleExp() const { return _scaleExp; }
 	};
 
 	class Trackball3D : public Trackball

@@ -80,27 +80,27 @@ namespace TextileUX
 		_motionSpeed( 0.001f ),
 		_rotation( 0 ),
 		_rotationSpeed( 0.01f ),
-		_scale( 0 ),
+		_scaleExp( 0 ),
 		_scaleSpeed( 0.01f ),
 		_wheelSpeed( 0.1f ),
-		_scalePow( 2.0f ),
+		_scaleBase( 2.0f ),
 		_lockRotation( lockRotation )
 	{}
 
-	Trackball2D::Trackball2D( const glm::vec3 &t, float r, float s, bool lockRotation ) :
+	Trackball2D::Trackball2D( const glm::vec3 &t, float r, float se, bool lockRotation ) :
 		Trackball(),
 		_relativeMode( false ),
 		_trans( t ),
 		_motionSpeed( 0.001f ),
 		_rotation( r ),
 		_rotationSpeed( 0.01f ),
-		_scale( s ),
+		_scaleExp( se ),
 		_scaleSpeed( 0.01f ),
 		_wheelSpeed( 0.1f ),
-		_scalePow( 2.0f ),
+		_scaleBase( 2.0f ),
 		_defaultTrans( t ),
 		_defaultRotation( r ),
-		_defaultScale( s ),
+		_defaultScaleExp( se ),
 		_lockRotation( lockRotation )
 	{
 		reset();
@@ -111,9 +111,13 @@ namespace TextileUX
 
 	void Trackball2D::reset()
 	{
-		_m = glm::translate( _defaultTrans )
-			* glm::rotate( _defaultRotation, unitZ() )
-			* glm::scale( glm::vec3( max( 0.000001f, pow( _scalePow, _defaultScale ) ) ) );
+		_trans = _defaultTrans;
+		_rotation = _defaultRotation;
+		_scaleExp = _defaultScaleExp;
+
+		_m = glm::translate( _trans )
+			* glm::rotate( _rotation, unitZ() )
+			* glm::scale( glm::vec3( max( 0.000001f, pow( _scaleBase, _scaleExp ) ) ) );
 	}
 
 	void Trackball2D::motion( const glm::ivec2 &pos )
@@ -130,9 +134,9 @@ namespace TextileUX
 		if( _buttonMask & ( 0x01 << 1 ) ) //middle
 		{
 			if( _relativeMode )
-				_m = glm::scale( glm::vec3( max( 0.000001f, pow( _scalePow, -d.y * _scaleSpeed ) ) ) ) * _m;
+				_m = glm::scale( glm::vec3( max( 0.000001f, pow( _scaleBase, -d.y * _scaleSpeed ) ) ) ) * _m;
 			else
-				_scale += -d.y * _scaleSpeed;
+				_scaleExp += -d.y * _scaleSpeed;
 		}
 		if( _buttonMask & ( 0x01 << 2 ) ) //right
 		{
@@ -152,9 +156,9 @@ namespace TextileUX
 	void Trackball2D::mouseWheelMotion( int direction, const glm::ivec2 &pos )
 	{
 		if( _relativeMode )
-			_m = glm::scale( glm::vec3( max( 0.000001f, pow( _scalePow, direction * _wheelSpeed ) ) ) ) * _m;
+			_m = glm::scale( glm::vec3( max( 0.000001f, pow( _scaleBase, direction * _wheelSpeed ) ) ) ) * _m;
 		else
-			_scale += direction * _wheelSpeed;
+			_scaleExp += direction * _wheelSpeed;
 
 		update();
 		
@@ -167,7 +171,7 @@ namespace TextileUX
 		{
 			_m = glm::translate( _trans )
 				* glm::rotate( _rotation, unitZ() )
-				* glm::scale( glm::vec3( max( 0.000001f, pow( _scalePow, _scale ) ) ) )
+				* glm::scale( glm::vec3( max( 0.000001f, pow( _scaleBase, _scaleExp ) ) ) )
 				;
 		}
 	}

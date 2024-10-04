@@ -17,7 +17,6 @@
 
 namespace ImGui
 {
-
 	static ImU32 InvertColorU32( ImU32 in )
 	{
 		ImVec4 in4 = ColorConvertU32ToFloat4( in );
@@ -205,6 +204,22 @@ namespace ImGui
 
 namespace TextileUX
 {
+	const char *unitToString( Unit unit )
+	{
+		switch( unit )
+		{
+		case U_MM:
+			return "mm";
+		case U_CM:
+			return "cm";
+		case U_M:
+			return "m";
+		case U_IN:
+			return "in";
+		}
+		return "";
+	}
+
 	double globalTime = 0.0;
 	double getGlobalTime() { return globalTime; }
 

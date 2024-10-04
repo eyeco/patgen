@@ -10,8 +10,6 @@
 
 #include <conio.h>
 
-#include <cxxopts.hpp>
-
 #include <common.h>
 #include <iniFile.h>
 
@@ -49,10 +47,16 @@
 using namespace TextileUX;
 
 #define KEY_RETURN	13
+#define KEY_DC1		17
 #define KEY_ESC		27
 
+#ifdef WIN32
 #define WINDOW_DECORATION_OFFSET_X 8
 #define WINDOW_DECORATION_OFFSET_Y 31
+#else
+//TODO
+#error put decoration sizes of other GUI systems here
+#endif
 
 #ifdef USE_GLUT
 int glutWindowID = -1;
@@ -73,13 +77,24 @@ double timeAccu = 0.0;
 
 glm::vec4 clearColor;
 
+bool drawGrid = true;
+int gridCount = 3;
+float gridSpacing = 0.25f;
 std::vector<VertexBuffer*> grids( 3 );
 
 PatternParamsBase *params = nullptr;
 DoublePattern *pattern = nullptr;
 int stitchProgress = 0;
 
-Trackball2D trackball( zero(), 0.0f, -2.5 );
+bool drawCrosshair = false;
+glm::vec3 crosshairColor( 0.75f, 0.75f, 0.75f );
+
+glm::vec2 mousePos;
+
+glm::vec3 defaultTrackballT = zero();
+float defaultTrackballR = 0.0f;
+float defaultTrackballSE = -2.5;
+Trackball2D trackball( defaultTrackballT, defaultTrackballR, defaultTrackballSE );
 
 IniFile* ini = nullptr;
 char imGuiIniFileName[1024];
@@ -91,81 +106,7 @@ Unit unit = U_MM;
 namespace TextileUX
 {
 	extern double globalTime;
-
-	struct StartupConfig
-	{
-	private:
-		template<typename T>
-		static std::string toString( const T &t )
-		{
-			std::stringstream sstr;
-			sstr << t;
-
-			return sstr.str();
-		}
-
-		template<>
-		static std::string toString<bool>( const bool &t )
-		{
-			return std::string( t ? "true" : "false" );
-		}
-
-	public:
-		StartupConfig()
-		{}
-
-		static bool readPA( int argc, char **argv, StartupConfig &cfg )
-		{
-			//generic options: 
-			cxxopts::Options options( argv[0], " command line options" );
-			options
-				.positional_help( "[optional args]" )
-				.show_positional_help();
-
-			options.add_options()
-				//TODO: incorporate version, run RCStamp tool as pre build step and generate include file with version number constants
-				//http://www.codeproject.com/KB/dotnet/build_versioning.aspx
-				//		( "version,v",										"print version string" )
-				( "h,help", "print help" )
-				;
-
-			//positional options:
-
-			try
-			{
-				cxxopts::ParseResult result = options.parse( argc, argv );
-
-				//generic options
-				if( result.count( "help" ) )
-				{
-					std::cout << options.help( { 
-						""//, 
-						//"OSC" 
-					} ) << std::endl;
-
-					return false;
-				}
-
-			}
-			catch( std::exception &e )
-			{
-				std::cerr << e.what() << std::endl;
-
-				std::stringstream sstr;
-				sstr << std::endl << "An error occured, processing program options: " << std::endl
-					<< e.what() << std::endl;
-
-				std::cout << options.help();
-
-				throw std::runtime_error( sstr.str().c_str() );
-			}
-
-			return true;
-		}
-	};
 }
-
-StartupConfig cfg;
 
 bool quit = false;
 bool cleaned = false;
@@ -194,58 +135,28 @@ void clearPattern()
 	stitchProgress = 0;
 }
 
-
-void displayQuad( float left, float bottom, float right, float top )
+void createGrids()
 {
-	std::vector<GLfloat> vertices( 8 );
+	int p = pow( 2, grids.size() - 1 );
+	float size = p * 10 * gridSpacing;
 
-	vertices[0] = left;
-	vertices[1] = bottom;
+	std::cout << "p: " << p << ", size: " << size << std::endl;
 
-	vertices[2] = right;
-	vertices[3] = bottom;
-
-	vertices[4] = right;
-	vertices[5] = top;
-
-	vertices[6] = left;
-	vertices[7] = top;
-
-	glEnableClientState( GL_VERTEX_ARRAY );
-	glVertexPointer( 2, GL_FLOAT, 0, &vertices[0] );
-
-	glDrawArrays( GL_TRIANGLE_FAN, 0, 8 );
-
-	// deactivate vertex arrays after drawing
-	glDisableClientState( GL_VERTEX_ARRAY );
-}
-
-void displayGraph( const std::vector<float> &values, unsigned int maxValues )//, float bottom, float top )
-{
-	if( values.size() )
+	for( int i = 0; i < grids.size(); i++ )
 	{
-		std::vector<GLfloat> vertices( values.size() * 2 );
+		safeDelete( grids[i] );
 
-		for( int i = 0; i < values.size(); i++ )
-		{
-			vertices[i * 2 + 0] = (float) i / ( maxValues - 1.0f );
-			vertices[i * 2 + 1] = values[i];
-		}
-
-		glEnableClientState( GL_VERTEX_ARRAY );
-		glVertexPointer( 2, GL_FLOAT, 0, &vertices[0] );
-
-		glDrawArrays( GL_LINE_STRIP, 0, (GLsizei)values.size() );
-		//glDrawArrays( GL_POINTS, 0, values.size() );
-
-		// deactivate vertex arrays after drawing
-		glDisableClientState( GL_VERTEX_ARRAY );
+		int subdivisions = ( 10 * pow( 2, i ) ) - 1;
+		grids[i] = VertexBuffer::createGrid( glm::vec2( size ), subdivisions, glm::vec3( 0.2f, 0.3f, 0.5f ) * 0.5f );
 	}
 }
 
 void motion( int x, int y )
 {
 	bool imGuiHandled = ( ImGui::GetIO().WantCaptureMouse && uiActive );
+
+	mousePos.x = x;
+	mousePos.y = y;
 
 #ifdef USE_GLUT
 	if( uiActive )
@@ -259,6 +170,9 @@ void motion( int x, int y )
 void passiveMotion( int x, int y )
 {
 	bool imGuiHandled = ( ImGui::GetIO().WantCaptureMouse && uiActive );
+
+	mousePos.x = x;
+	mousePos.y = y;
 
 #ifdef USE_GLUT
 	if( uiActive )
@@ -280,6 +194,14 @@ void mouse( int button, int state, int x, int y )
 
 	if( !imGuiHandled )
 		trackball.onMouse( button, state, x, y );
+
+	if( button == 0 )
+	{
+		if( state )
+			drawCrosshair = false;
+		else if( !imGuiHandled )
+			drawCrosshair = true;
+	}
 }
 
 void mouseWheel( int wheel, int direction, int x, int y )
@@ -311,17 +233,16 @@ void keyDown( int key )
 	if( uiActive )
 		ImGui_ImplFreeGLUT_KeyboardFunc( key, x, y );
 
+	int mods = glutGetModifiers();
 	switch( key )
 	{
-	case ' ':
-		//uiActive = !uiActive;
-		//std::cout << ( uiActive ? "activated" : "deactivated" ) << " UI" << std::endl;
-		break;
 	case KEY_RETURN:
+	case KEY_ESC:
 		stitchProgress = 0;
 		break;
-	case KEY_ESC:
-		quit = true;
+	case KEY_DC1:
+		if( !( mods & GLUT_ACTIVE_SHIFT ) && !( mods & GLUT_ACTIVE_ALT ) )
+			quit = true;
 		break;
 	}
 #else
@@ -335,8 +256,9 @@ void keyDown( int key )
 	case SDLK_MINUS:
 	case SDLK_KP_MINUS:
 		break;
+	case SDLK_RETURN:
 	case SDLK_ESCAPE:
-		quit = true;
+		stitchProgress = 0;
 		break;
 	}
 #endif
@@ -396,6 +318,10 @@ void specialUp( int key, int x, int y )
 	if( uiActive )
 		ImGui_ImplFreeGLUT_SpecialUpFunc( key, x, y );
 #endif
+
+	switch( key )
+	{
+	}
 }
 
 void update()
@@ -409,7 +335,7 @@ void update()
 	timeAccu += dt;
 	::globalTime += dt;
 
-	//TODO: update your shit
+	//update potential temporal stuff here
 }
 
 void display()
@@ -438,13 +364,13 @@ void display()
 		{
 			glMultMatrixf( glm::value_ptr( trackball.mat() ) );
 
-			for( int i = 0; i < grids.size(); i++ )
-			{
-				glLineWidth( grids.size() - i );
-				grids[i]->draw();
-			}
+			if( drawGrid )
+				for( int i = 0; i < grids.size(); i++ )
+				{
+					glLineWidth( grids.size() - i );
+					grids[i]->draw();
+				}
 
-			//glScalef( 0.1, 0.1, 0.1 );
 			if( pattern )
 			{
 				pattern->draw();
@@ -547,6 +473,43 @@ void display()
 
 	double dt = diff.count();
 
+	float mouseX_normalized = mousePos.x / windowWidth * 2.0f - 1.0f;
+	float mouseY_normalized = -( mousePos.y / windowHeight * 2.0f - 1.0f );
+
+	if( drawCrosshair )
+	{
+		glPushAttrib( GL_ALL_ATTRIB_BITS );
+		{
+			glMatrixMode( GL_PROJECTION );
+			glLoadIdentity();
+
+			glMatrixMode( GL_MODELVIEW );
+			glLoadIdentity();
+
+			glPushMatrix();
+			{
+				glEnable( GL_COLOR_MATERIAL );
+				glDisable( GL_TEXTURE_2D );
+				glDisable( GL_DEPTH_TEST );
+
+				glLineWidth( 1 );
+				glColor3fv( glm::value_ptr( crosshairColor ) );
+
+				glBegin( GL_LINES );
+				{
+					glVertex3f( -1.0f, mouseY_normalized, 0.0f );
+					glVertex3f( 1.0f, mouseY_normalized, 0.0f );
+
+					glVertex3f( mouseX_normalized, -1.0f, 0.0f );
+					glVertex3f( mouseX_normalized, 1.0f, 0.0f );
+				}
+				glEnd();
+			}
+			glPopMatrix();
+		}
+		glPopAttrib();
+	}
+
 	if( pattern )
 	{
 		glPushAttrib( GL_ALL_ATTRIB_BITS );
@@ -636,7 +599,6 @@ void display()
 			io.DeltaTime = (float) dt;
 		ImGui::NewFrame();
 
-		//TODO: draw GUI here
 		if( ImGui::BeginMainMenuBar() )
 		{
 			if( ImGui::BeginMenu( "File" ) )
@@ -645,7 +607,7 @@ void display()
 				{
 					save();
 				}
-				if( ImGui::MenuItem( "Exit", "ESC" ) )
+				if( ImGui::MenuItem( "Exit", "Ctrl+Q" ) )
 				{
 					quit = true;
 				}
@@ -773,36 +735,73 @@ void display()
 						}
 					}
 				}
+				ImGui::Separator();
+				if( ImGui::MenuItem( "Clear pattern" ) )
+				{
+					clearPattern();
+				}
 				ImGui::EndMenu();
 			}
 
 			if( ImGui::BeginMenu( "Scale" ) )
 			{
-				if( ImGui::RadioButton( "m", ( unit == U_M ) ) )
+				for( int i = 0; i < (int) U_COUNT; i++ )
 				{
-					unit = U_M;
-					if( pattern )
-						pattern->setUnit( unit );
-				}
-				if( ImGui::RadioButton( "cm", ( unit == U_CM ) ) )
-				{
-					unit = U_CM;
-					if( pattern )
-						pattern->setUnit( unit );
-				}
-				if( ImGui::RadioButton( "mm", ( unit == U_MM ) ) )
-				{
-					unit = U_MM;
-					if( pattern )
-						pattern->setUnit( unit );
+					if( i == U_IN )
+						continue;	//TODO: implement inch in save() methods of patterns
+
+					if( ImGui::RadioButton( unitToString( (Unit) i ), ( unit == i ) ) )
+					{
+						unit = (Unit) i;
+						if( pattern )
+							pattern->setUnit( unit );
+					}
 				}
 
+				ImGui::EndMenu();
+			}
+
+			if( ImGui::BeginMenu( "View" ) )
+			{
+				if( ImGui::MenuItem( "Grid", nullptr, drawGrid ) )
+					drawGrid = !drawGrid;
+
+				float f = gridSpacing;
+				{
+					ScopedImGuiDisable disable( !drawGrid );
+					ImGui::PushItemWidth( 100 );
+					if( ImGui::InputFloat( "Grid spacing", &f, 0.01 ) )
+					{
+						gridSpacing = f;
+						createGrids();
+					}
+					ImGui::PopItemWidth();
+				}
+
+				if( ImGui::MenuItem( "Reset view" ) )
+					trackball = Trackball2D( defaultTrackballT, defaultTrackballR, defaultTrackballSE );
 
 				ImGui::EndMenu();
 			}
 
 			ImGui::EndMainMenuBar();
 		}
+
+		ImGui::Begin( "info" );
+		{
+			glm::vec3 worldPos( glm::inverse( trackball.mat() ) * glm::vec4( mouseX_normalized, mouseY_normalized / ar, 0.0f, 1.0f ) );
+
+			const char* us = unitToString( unit );
+
+			ImGui::Text( "pos" );
+			ImGui::Text( "x: %.2f %s", worldPos.x, us );
+			ImGui::Text( "y: %.2f %s", worldPos.y, us );
+
+			ImGui::Text( "screen" );
+			ImGui::Text( "x: %4dpx", (int) mousePos.x );
+			ImGui::Text( "y: %4dpx", (int) mousePos.y );
+		}
+		ImGui::End();
 
 		ImGui::Begin( "params" );
 		{
@@ -1088,8 +1087,7 @@ void initGL( int argc, char **argv )
 	moved( windowX, windowY );
 	sizeChanged( windowWidth, windowHeight );
 
-	for( int i = 0; i < grids.size(); i++ )
-		grids[i] = VertexBuffer::createGrid( glm::vec2( 10.0f ), ( 10 * pow( 2, ( i ) ) ) - 1, glm::vec3( 0.2f, 0.3f, 0.5f ) * 0.5f );
+	createGrids(); 
 }
 
 void readIni()
@@ -1114,19 +1112,21 @@ void readIni()
 		{
 			glm::vec3 t;
 			float r = 0;
-			float s = 0;
+			float se = 0;
 			c->tryGet<glm::vec3>( "t", t );
 			//c->tryGet<float>( "r", r );
-			c->tryGet<float>( "s", s );
+			c->tryGet<float>( "se", se );
 
-			trackball = Trackball2D( t, r, s, true );
+			trackball = Trackball2D( t, r, se, true );
 		}
 
 		IniFile::Section* a = ini->tryGet( "app" );
 		if( a )
 		{
-			//a->tryGet<bool>( "autosave", _autoSave );
+			a->tryGet<bool>( "grid", drawGrid );
+			a->tryGet<float>( "spacing", gridSpacing );
 		}
+
 	}
 }
 
@@ -1142,9 +1142,10 @@ void saveIni()
 
 		( *ini )["trackball"].set( "t", trackball.getTranslation() );
 		//( *ini )["trackball"].set( "r", trackball.getRotation() );
-		( *ini )["trackball"].set( "s", trackball.getScale() );
+		( *ini )["trackball"].set( "se", trackball.getScaleExp() );
 
-		//( *_ini )["app"].set( "autosave", _autoSave );
+		( *ini )["app"].set( "grid", drawGrid );
+		( *ini )["app"].set( "spacing", gridSpacing );
 
 		if( !ini->write() )
 			std::cerr << "<error> failed to write window.ini" << std::endl;
@@ -1229,82 +1230,79 @@ int main( int argc, char **argv )
 		
 		setArg0( argv[0] );
 
-		if( StartupConfig::readPA( argc, argv, cfg ) )
-		{
-			readIni();
-			initGL( argc, argv );
+		readIni();
+		initGL( argc, argv );
 
 #ifdef USE_GLUT
-			glutMainLoop();
+		glutMainLoop();
 #else
-			while( !quit )
+		while( !quit )
+		{
+			SDL_Event event;
+			while( SDL_PollEvent( &event ) )
 			{
-				SDL_Event event;
-				while( SDL_PollEvent( &event ) )
+				if( event.type == SDL_QUIT )
+					quit = true;
+
+				if( event.type == SDL_WINDOWEVENT )
 				{
-					if( event.type == SDL_QUIT )
-						quit = true;
-
-					if( event.type == SDL_WINDOWEVENT )
+					switch( event.window.event )
 					{
-						switch( event.window.event )
-						{
-						case SDL_WINDOWEVENT_SHOWN:
-							break;
-						case SDL_WINDOWEVENT_HIDDEN:
-							break;
-						case SDL_WINDOWEVENT_EXPOSED:
-							break;
-						case SDL_WINDOWEVENT_MOVED:
-							moved( event.window.data1, event.window.data2 );
-							break;
-						case SDL_WINDOWEVENT_RESIZED:
-							break;
-						case SDL_WINDOWEVENT_SIZE_CHANGED:
-							sizeChanged( event.window.data1, event.window.data2 );
-							break;
-						case SDL_WINDOWEVENT_MINIMIZED:
-							break;
-						case SDL_WINDOWEVENT_MAXIMIZED:
-							break;
-						case SDL_WINDOWEVENT_RESTORED:
-							break;
-						case SDL_WINDOWEVENT_ENTER:
-							break;
-						case SDL_WINDOWEVENT_LEAVE:
-							break;
-						case SDL_WINDOWEVENT_FOCUS_GAINED:
-							break;
-						case SDL_WINDOWEVENT_FOCUS_LOST:
-							break;
-						case SDL_WINDOWEVENT_CLOSE:
-							break;
+					case SDL_WINDOWEVENT_SHOWN:
+						break;
+					case SDL_WINDOWEVENT_HIDDEN:
+						break;
+					case SDL_WINDOWEVENT_EXPOSED:
+						break;
+					case SDL_WINDOWEVENT_MOVED:
+						moved( event.window.data1, event.window.data2 );
+						break;
+					case SDL_WINDOWEVENT_RESIZED:
+						break;
+					case SDL_WINDOWEVENT_SIZE_CHANGED:
+						sizeChanged( event.window.data1, event.window.data2 );
+						break;
+					case SDL_WINDOWEVENT_MINIMIZED:
+						break;
+					case SDL_WINDOWEVENT_MAXIMIZED:
+						break;
+					case SDL_WINDOWEVENT_RESTORED:
+						break;
+					case SDL_WINDOWEVENT_ENTER:
+						break;
+					case SDL_WINDOWEVENT_LEAVE:
+						break;
+					case SDL_WINDOWEVENT_FOCUS_GAINED:
+						break;
+					case SDL_WINDOWEVENT_FOCUS_LOST:
+						break;
+					case SDL_WINDOWEVENT_CLOSE:
+						break;
 #if SDL_VERSION_ATLEAST(2, 0, 5)
-						case SDL_WINDOWEVENT_TAKE_FOCUS:
-							break;
-						case SDL_WINDOWEVENT_HIT_TEST:
-							break;
+					case SDL_WINDOWEVENT_TAKE_FOCUS:
+						break;
+					case SDL_WINDOWEVENT_HIT_TEST:
+						break;
 #endif
-						default:
-							break;
-						}
+					default:
+						break;
 					}
-
-					if( event.type == SDL_KEYDOWN )
-						keyDown( event.key.keysym.sym );
 				}
 
-				update();
-				display();
-
-				GLenum err = glGetError();
-				if( err != GL_NO_ERROR )
-					std::cerr << "openGL error: " << glewGetErrorString( err );
+				if( event.type == SDL_KEYDOWN )
+					keyDown( event.key.keysym.sym );
 			}
+
+			update();
+			display();
+
+			GLenum err = glGetError();
+			if( err != GL_NO_ERROR )
+				std::cerr << "openGL error: " << glewGetErrorString( err );
+		}
 #endif
 
-			cleanup();
-		}
+		cleanup();
 	}
 	catch( std::exception &e )
 	{

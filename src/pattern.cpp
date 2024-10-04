@@ -341,7 +341,8 @@ namespace TextileUX
 			scale = 1;
 			break;
 		default:
-			std::cerr << "ERROR: unit not set" << std::endl;
+			//TODO: implement inch (also set reasonable reference frame)
+			std::cerr << "ERROR: unit not implemented" << std::endl;
 			return false;
 		}
 

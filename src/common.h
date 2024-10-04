@@ -62,8 +62,12 @@ namespace TextileUX
 		U_CM,
 		U_M,
 
+		U_IN,
+
 		U_COUNT
 	};
+
+	const char *unitToString( Unit unit );
 
 	template<typename T>
 	inline void safeDelete( T* &ptr )
