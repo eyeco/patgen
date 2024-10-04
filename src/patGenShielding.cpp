@@ -113,7 +113,7 @@ bool cleaned = false;
 
 bool uiActive = true;
 
-//stupid ImGui is stupid. have to use flag.
+//have to use flag to keep track of ImGui init state.
 bool imGuiInitialized = false;
 
 void save()
@@ -870,7 +870,7 @@ void initImGui()
 		}
 	}
 
-	//stupid ImGui is stupid. have to use flag so it won't crash at shutdown when we did not make it until here.
+	//have to use flag to avoid crash it shutdown, in case we did not make it until here.
 	imGuiInitialized = true;
 }
 
@@ -1058,7 +1058,7 @@ void cleanup()
 
 #ifdef USE_GLUT
 
-	//stupid ImGui is stupid. have to use flag to avoid potential crash.
+	//have to use flag to keep track of ImGui init state and to avoid crash.
 	if( imGuiInitialized )
 	{
 		ImGui_ImplOpenGL2_Shutdown();

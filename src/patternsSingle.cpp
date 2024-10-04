@@ -29,10 +29,8 @@ namespace TextileUX
 
 	void BoustrophedonCircle::updateSizeString()
 	{
-		auto& stitches = _trace.getStitches();
-
 		std::stringstream sstr;
-		sstr << _rMax;
+		sstr << "r: " << _rMax;
 
 		_sizeString = sstr.str();
 	}
@@ -40,6 +38,8 @@ namespace TextileUX
 	void BoustrophedonCircle::clear()
 	{
 		Pattern::clear();
+
+		_rMax = 0.0f;
 	}
 
 	bool BoustrophedonCircle::build( const PatternParamsBase* params )
@@ -193,9 +193,8 @@ namespace TextileUX
 	{
 		std::stringstream sstr;
 		sstr <<
-			glm::length( _first ) <<
-			" -> " <<
-			glm::length( _last );
+			"ri: " << glm::length( _first ) <<
+			", ro: " << glm::length( _last );
 
 		_sizeString = sstr.str();
 	}
@@ -203,6 +202,9 @@ namespace TextileUX
 	void SpiralCircle::clear()
 	{
 		Pattern::clear();
+
+		_first = zero();
+		_last = zero();
 	}
 
 	bool SpiralCircle::build( const PatternParamsBase* params )
@@ -312,7 +314,7 @@ namespace TextileUX
 		auto& stitches = _trace.getStitches();
 
 		std::stringstream sstr;
-		sstr << _width << " x " << _width;
+		sstr << "w: " << _width;
 
 		_sizeString = sstr.str();
 	}
@@ -320,6 +322,8 @@ namespace TextileUX
 	void BoustrophedonQuadOrtho::clear()
 	{
 		Pattern::clear();
+
+		_width = 0.0f;
 	}
 
 	bool BoustrophedonQuadOrtho::build( const PatternParamsBase* params )
@@ -399,7 +403,7 @@ namespace TextileUX
 		auto& stitches = _trace.getStitches();
 
 		std::stringstream sstr;
-		sstr << _width << " x " << _width;
+		sstr << "w: " << _width;
 
 		_sizeString = sstr.str();
 	}
@@ -407,6 +411,8 @@ namespace TextileUX
 	void BoustrophedonQuadDiag::clear()
 	{
 		Pattern::clear();
+
+		_width = 0.0f;
 	}
 
 	bool BoustrophedonQuadDiag::build( const PatternParamsBase* params )
@@ -512,7 +518,7 @@ namespace TextileUX
 		auto& stitches = _trace.getStitches();
 
 		std::stringstream sstr;
-		sstr << _width << " x " << _width;
+		sstr << "w: " << _width;
 
 		_sizeString = sstr.str();
 	}
@@ -520,6 +526,8 @@ namespace TextileUX
 	void BoustrophedonQuadDouble::clear()
 	{
 		Pattern::clear();
+
+		_width = 0;
 	}
 
 	bool BoustrophedonQuadDouble::build( const PatternParamsBase* params )

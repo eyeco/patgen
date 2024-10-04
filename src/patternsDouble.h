@@ -7,6 +7,8 @@ namespace TextileUX
 	class DoublePattern : public Pattern
 	{
 	protected:
+		float _width;
+
 		Trace _trace2;
 
 		std::vector<glm::vec3> _shortcuts;
@@ -93,7 +95,7 @@ namespace TextileUX
 
 			PatternParams() :
 				PatternParamsBase(),
-				_windings( 10 )
+				_windings( 5 )
 			{}
 
 			virtual bool drawUI();
@@ -123,7 +125,7 @@ namespace TextileUX
 
 			PatternParams() :
 				PatternParamsBase(),
-				_turns( 10 )
+				_turns( 5 )
 			{}
 
 			virtual bool drawUI();
@@ -154,7 +156,7 @@ namespace TextileUX
 
 			PatternParams() :
 				PatternParamsBase(),
-				_turns( 10 )
+				_turns( 5 )
 			{}
 
 			virtual bool drawUI();
@@ -174,7 +176,6 @@ namespace TextileUX
 		unsigned int _order;
 		float _dist;
 
-
 	protected:
 		virtual void updateSizeString();
 
@@ -186,7 +187,7 @@ namespace TextileUX
 
 			PatternParams() :
 				PatternParamsBase(),
-				_order( 4 )
+				_order( 3 )
 			{}
 
 			virtual bool drawUI();

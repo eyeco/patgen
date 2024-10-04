@@ -76,6 +76,7 @@ namespace TextileUX
 		else
 			_stitches = _verts;
 
+		/*
 		//for all stitches that are too close remove the earlier one
 		// minimum jump size is 25% of targeted jump size
 		float mj2 = _minJumpSize * _minJumpSize;
@@ -88,6 +89,7 @@ namespace TextileUX
 		}
 		temp.push_back( _stitches.back() );
 		_stitches = temp;
+		*/
 
 		return true;
 	}

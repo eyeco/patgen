@@ -22,7 +22,9 @@ namespace TextileUX
 
 
 	TiledPattern::TiledPattern( const std::string& name ) :
-		DoublePattern( name )
+		DoublePattern( name ),
+		_tilesX( 0 ),
+		_tilesY( 0 )
 	{}
 
 	TiledPattern::~TiledPattern()
@@ -34,6 +36,8 @@ namespace TextileUX
 	{
 		DoublePattern::clear();
 
+		_tilesX = 0;
+		_tilesY = 0;
 		swipeTraces();
 	}
 
@@ -281,9 +285,9 @@ namespace TextileUX
 	{
 		std::stringstream sstr;
 		sstr <<
-			"TODO" <<
-			" -> " <<
-			"TODO";
+			_tilesX << " x " << ( _tilesY + 1 ) << ", " <<
+			( _tilesX + 1 ) << " x " << _tilesY << ", " <<
+			_width;
 
 		_sizeString = sstr.str();
 	}
@@ -296,22 +300,20 @@ namespace TextileUX
 		if( !p )
 			return false;
 
-		clear();
-
 		_windings = p->_windings;
 		_dist = p->_dist;
 		_cellDist = p->_cellDist;
 
-		int tilesX = p->_cellsX;
-		int tilesY = p->_cellsY;
+		_tilesX = p->_cellsX;
+		_tilesY = p->_cellsY;
 
-		if( _windings < 1 || tilesX < 1 || tilesY < 1 )
+		if( _windings < 1 || _tilesX < 1 || _tilesY < 1 )
 			return false;
-
 
 		float sqrt2 = sqrt( 2 );
 
 		float diamondDiagonal = _windings * _dist * 2;
+		_width = diamondDiagonal / sqrt2;
 
 		float cellDiagonal = _cellDist * sqrt2 + diamondDiagonal;
 
@@ -348,28 +350,28 @@ namespace TextileUX
 				temp.push_back( glm::vec3( -diamondDiagonal + progress, -offset - progress, 0 ) );
 		}
 
-		float x0 = -( tilesX - 1 ) * cellDiagonal * 0.5f;
-		float y0 = ( tilesY - 1 ) * cellDiagonal * 0.5f + cellDiagonal;
+		float x0 = -( _tilesX - 1 ) * cellDiagonal * 0.5f;
+		float y0 = ( _tilesY - 1 ) * cellDiagonal * 0.5f + cellDiagonal;
 
 		_trace.insertBack( glm::vec3( x0, y0, 0 ) );
-		for( int i = 0; i <= tilesY; i++ )
+		for( int i = 0; i <= _tilesY; i++ )
 			for( auto& p : temp )
 				_trace.insertBack( glm::vec3( x0, y0 - i * cellDiagonal, 0 ) + p );
-		_trace.insertBack( glm::vec3( x0, y0 - ( tilesY + 1 ) * cellDiagonal, 0 ) );
+		_trace.insertBack( glm::vec3( x0, y0 - ( _tilesY + 1 ) * cellDiagonal, 0 ) );
 
-		x0 = -( tilesY - 1 ) * cellDiagonal * 0.5f;
-		y0 = ( tilesX - 1 ) * cellDiagonal * 0.5f + cellDiagonal;
+		x0 = -( _tilesY - 1 ) * cellDiagonal * 0.5f;
+		y0 = ( _tilesX - 1 ) * cellDiagonal * 0.5f + cellDiagonal;
 
 		_trace2.insertBack( glm::vec3( -y0, x0, 0 ) );
-		for( int i = 0; i <= tilesX; i++ )
+		for( int i = 0; i <= _tilesX; i++ )
 			for( auto& p : temp )
 				_trace2.insertBack( glm::vec3( -y0 + i * cellDiagonal, x0, 0 ) + glm::vec3( -p.y, p.x, 0 ) );
-		_trace2.insertBack( glm::vec3( -y0 + ( tilesX + 1 ) * cellDiagonal, x0, 0 ) );
+		_trace2.insertBack( glm::vec3( -y0 + ( _tilesX + 1 ) * cellDiagonal, x0, 0 ) );
 
 		if( !DoublePattern::build( params ) )
 			return false;
 
-		for( int i = 1; i < tilesX; i++ )
+		for( int i = 1; i < _tilesX; i++ )
 		{
 			Trace *t = new Trace( _trace );
 			t->translate( glm::vec3( i * cellDiagonal, 0, 0 ) );
@@ -377,7 +379,7 @@ namespace TextileUX
 
 			_traces.push_back( t );
 		}
-		for( int i = 1; i < tilesY; i++ )
+		for( int i = 1; i < _tilesY; i++ )
 		{
 			Trace *t = new Trace( _trace2 );
 			t->translate( glm::vec3( 0, i * cellDiagonal, 0 ) );
@@ -393,7 +395,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		//TODO: add windings and tilesX/Y
+		//TODO: add windings and _tilesX/Y
 		sprintf( tempStr, "%s-d%.01f-j[u%.01f-l%.01f]", getName().c_str(), _dist, _trace2.getJumpSize(), _trace.getJumpSize() );
 
 		return std::string( tempStr );
@@ -426,9 +428,9 @@ namespace TextileUX
 	{
 		std::stringstream sstr;
 		sstr <<
-			"TODO" <<
-			" -> " <<
-			"TODO";
+			_tilesX << " x " << ( _tilesY + 1 ) << ", " <<
+			( _tilesX + 1 ) << " x " << _tilesY << ", " <<
+			_width;
 
 		_sizeString = sstr.str();
 	}
@@ -441,21 +443,20 @@ namespace TextileUX
 		if( !p )
 			return false;
 
-		clear();
-
 		_turns = p->_turns;
 		_dist = p->_dist;
 		_cellDist = p->_cellDist;
 
-		int tilesX = p->_cellsX;
-		int tilesY = p->_cellsY;
+		_tilesX = p->_cellsX;
+		_tilesY = p->_cellsY;
 
-		if( _turns < 1 || tilesX < 1 || tilesY < 1 )
+		if( _turns < 1 || _tilesX < 1 || _tilesY < 1 )
 			return false;
 
 		float sqrt2 = sqrt( 2 );
 
 		float diamondDiagonal = _turns * _dist * 2 * sqrt2;
+		_width = diamondDiagonal / sqrt2;
 
 		float cellDiagonal = diamondDiagonal + _cellDist * sqrt2;
 
@@ -474,28 +475,28 @@ namespace TextileUX
 		}
 		temp.push_back( glm::vec3( 0, -cellDiagonal * 0.5, 0 ) );
 
-		float x0 = -( tilesX - 1 ) * cellDiagonal * 0.5f;
-		float y0 = ( tilesY - 1 ) * cellDiagonal * 0.5f + cellDiagonal;
+		float x0 = -( _tilesX - 1 ) * cellDiagonal * 0.5f;
+		float y0 = ( _tilesY - 1 ) * cellDiagonal * 0.5f + cellDiagonal;
 
 		_trace.insertBack( glm::vec3( x0, y0, 0 ) );
-		for( int i = 0; i <= tilesY; i++ )
+		for( int i = 0; i <= _tilesY; i++ )
 			for( auto& p : temp )
 				_trace.insertBack( glm::vec3( x0, y0 - i * cellDiagonal, 0 ) + p );
-		_trace.insertBack( glm::vec3( x0, y0 - ( tilesY + 1 ) * cellDiagonal, 0 ) );
+		_trace.insertBack( glm::vec3( x0, y0 - ( _tilesY + 1 ) * cellDiagonal, 0 ) );
 
-		x0 = -( tilesY - 1 ) * cellDiagonal * 0.5f;
-		y0 = ( tilesX - 1 ) * cellDiagonal * 0.5f + cellDiagonal;
+		x0 = -( _tilesY - 1 ) * cellDiagonal * 0.5f;
+		y0 = ( _tilesX - 1 ) * cellDiagonal * 0.5f + cellDiagonal;
 
 		_trace2.insertBack( glm::vec3( -y0, x0, 0 ) );
-		for( int i = 0; i <= tilesX; i++ )
+		for( int i = 0; i <= _tilesX; i++ )
 			for( auto& p : temp )
 				_trace2.insertBack( glm::vec3( -y0 + i * cellDiagonal, x0, 0 ) + glm::vec3( -p.y, p.x, 0 ) );
-		_trace2.insertBack( glm::vec3( -y0 + ( tilesX + 1 ) * cellDiagonal, x0, 0 ) );
+		_trace2.insertBack( glm::vec3( -y0 + ( _tilesX + 1 ) * cellDiagonal, x0, 0 ) );
 
 		if( !DoublePattern::build( params ) )
 			return false;
 
-		for( int i = 1; i < tilesX; i++ )
+		for( int i = 1; i < _tilesX; i++ )
 		{
 			Trace* t = new Trace( _trace );
 			t->translate( glm::vec3( i * cellDiagonal, 0, 0 ) );
@@ -503,7 +504,7 @@ namespace TextileUX
 
 			_traces.push_back( t );
 		}
-		for( int i = 1; i < tilesY; i++ )
+		for( int i = 1; i < _tilesY; i++ )
 		{
 			Trace* t = new Trace( _trace2 );
 			t->translate( glm::vec3( 0, i * cellDiagonal, 0 ) );
@@ -519,7 +520,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		//TODO: add turns and tilesX/Y
+		//TODO: add turns and _tilesX/Y
 		sprintf( tempStr, "%s-d%.01f-j[u%.01f-l%.01f]", getName().c_str(), _dist, _trace2.getJumpSize(), _trace.getJumpSize() );
 
 		return std::string( tempStr );
@@ -551,9 +552,8 @@ namespace TextileUX
 	{
 		std::stringstream sstr;
 		sstr <<
-			"TODO" <<
-			" -> " <<
-			"TODO";
+			_tilesX << " x " << _tilesY << ", " <<
+			_width;
 
 		_sizeString = sstr.str();
 	}
@@ -566,20 +566,20 @@ namespace TextileUX
 		if( !p )
 			return false;
 
-		clear();
-
 		_turns = p->_turns;
 		_dist = p->_dist;
 		_cellDist = p->_cellDist;
 
-		int tilesX = p->_cellsX;
-		int tilesY = p->_cellsY;
+		_tilesX = p->_cellsX;
+		_tilesY = p->_cellsY;
 
-		if( _turns < 1 || tilesX < 1 || tilesY < 1 )
+		if( _turns < 1 || _tilesX < 1 || _tilesY < 1 )
 			return false;
 
+		_width = _turns * _dist * 2 - _dist;
+
 		int dir = 0; // 0, 1, 2, 3 -> r, d, l, u
-		float w = ( _turns + 1 ) * _dist * 2;
+		float w = _width + _dist * 3;
 
 		std::list<glm::vec3> temp;
 
@@ -634,21 +634,21 @@ namespace TextileUX
 		temp.pop_front();
 		temp.pop_back();
 
-		float x0 = -( w - 2 * _dist ) * ( tilesX - 1 ) * 0.5f;
-		float y0 = ( w - 2 * _dist ) * ( tilesY - 1 ) * 0.5f;
+		float x0 = -( w - 2 * _dist ) * ( _tilesX - 1 ) * 0.5f;
+		float y0 = ( w - 2 * _dist ) * ( _tilesY - 1 ) * 0.5f;
 
-		for( int i = 0; i < tilesY; i++ )
+		for( int i = 0; i < _tilesY; i++ )
 			for( auto& p : temp )
 				_trace.insertBack( glm::vec3( x0, y0 - i * ( w - 2 * _dist ), 0 ) + p );
 
-		for( int i = 0; i < tilesX; i++ )
+		for( int i = 0; i < _tilesX; i++ )
 			for( auto& p : temp )
 				_trace2.insertBack( glm::vec3( x0 + i * ( w - 2 * _dist ), y0, 0 ) + glm::vec3( -p.y, p.x, 0 ) );
 
 		if( !DoublePattern::build( params ) )
 			return false;
 
-		for( int i = 1; i < tilesX; i++ )
+		for( int i = 1; i < _tilesX; i++ )
 		{
 			Trace* t = new Trace( _trace );
 			t->translate( glm::vec3( i * ( w - 2 * _dist ), 0, 0 ) );
@@ -656,7 +656,7 @@ namespace TextileUX
 
 			_traces.push_back( t );
 		}
-		for( int i = 1; i < tilesY; i++ )
+		for( int i = 1; i < _tilesY; i++ )
 		{
 			Trace* t = new Trace( _trace2 );
 			t->translate( glm::vec3( 0, -i * ( w - 2 * _dist ), 0 ) );
@@ -672,7 +672,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		//TODO: add turns and tilesX/Y
+		//TODO: add turns and _tilesX/Y
 		sprintf( tempStr, "%s-d%.01f-j[u%.01f-l%.01f]", getName().c_str(), _dist, _trace2.getJumpSize(), _trace.getJumpSize() );
 
 		return std::string( tempStr );
@@ -704,9 +704,8 @@ namespace TextileUX
 	{
 		std::stringstream sstr;
 		sstr <<
-			"TODO" <<
-			" -> " <<
-			"TODO";
+			_tilesX << " x " << _tilesY << ", " <<
+			_width;
 
 		_sizeString = sstr.str();
 	}
@@ -719,23 +718,22 @@ namespace TextileUX
 		if( !p )
 			return false;
 
-		clear();
-
 		_order = p->_order;
 		_dist = p->_dist;
 		_cellDist = p->_cellDist;
 
-		int tilesX = p->_cellsX;
-		int tilesY = p->_cellsY;
+		_tilesX = p->_cellsX;
+		_tilesY = p->_cellsY;
 
-		if( _order < 1 || tilesX < 1 || tilesY < 1 )
+		if( _order < 1 || _tilesX < 1 || _tilesY < 1 )
 			return false;
-
 
 		std::vector<glm::vec3> temp;
 
 		float cellSize = _order * 4 * _dist;
 		float tileSize = cellSize + _cellDist;
+
+		_width = cellSize;
 
 		//build lower
 
@@ -744,9 +742,6 @@ namespace TextileUX
 		float x0 = 0;
 		float y0 = tileSize / 2 - _cellDist * 0.5f;
 
-		//temp.push_back( glm::vec3( x0, y0, 0 ) );
-
-		//y0 -= _cellDist * 0.5f;
 		temp.push_back( glm::vec3( x0, y0, 0 ) );
 
 		//TOP
@@ -796,17 +791,14 @@ namespace TextileUX
 		}
 		temp.push_back( glm::vec3( x0, y0, 0 ) );
 
-		//y0 -= _cellDist * 0.5f;
-		//temp.push_back( glm::vec3( x0, y0, 0 ) );
-
-		x0 = -tileSize * ( tilesX - 1 ) * 0.5f;
-		y0 = tileSize * ( tilesY - 1 ) * 0.5f;
+		x0 = -tileSize * ( _tilesX - 1 ) * 0.5f;
+		y0 = tileSize * ( _tilesY - 1 ) * 0.5f;
 
 		_trace.insertBack( glm::vec3( x0, y0 + tileSize / 2, 0 ) );
-		for( int i = 0; i < tilesY; i++ )
+		for( int i = 0; i < _tilesY; i++ )
 			for( auto& p : temp )
 				_trace.insertBack( p + glm::vec3( x0, y0 - i * tileSize, 0 ) );
-		_trace.insertBack( glm::vec3( x0, y0 - tilesY * tileSize + tileSize / 2, 0 ) );
+		_trace.insertBack( glm::vec3( x0, y0 - _tilesY * tileSize + tileSize / 2, 0 ) );
 
 		//build upper
 
@@ -815,9 +807,6 @@ namespace TextileUX
 		x0 = -tileSize * 0.5f + _cellDist * 0.5f;
 		y0 = 0;
 
-		//temp.push_back( glm::vec3( x0, y0, 0 ) );
-
-		//x0 += _cellDist * 0.5f;
 		temp.push_back( glm::vec3( x0, y0, 0 ) );
 
 		for( int i = 0; i < _order * 2; i++ )
@@ -833,22 +822,19 @@ namespace TextileUX
 		}
 		temp.push_back( glm::vec3( x0, y0, 0 ) );
 
-		//x0 += _cellDist * 0.5f;
-		//temp.push_back( glm::vec3( x0, y0, 0 ) );
-
-		x0 = -tileSize * ( tilesX - 1 ) * 0.5f;
-		y0 = tileSize * ( tilesY - 1 ) * 0.5f;
+		x0 = -tileSize * ( _tilesX - 1 ) * 0.5f;
+		y0 = tileSize * ( _tilesY - 1 ) * 0.5f;
 
 		_trace2.insertBack( glm::vec3( x0 - tileSize * 0.5, y0, 0 ) );
-		for( int i = 0; i < tilesX; i++ )
+		for( int i = 0; i < _tilesX; i++ )
 			for( auto& p : temp )
 				_trace2.insertBack( p + glm::vec3( x0 + i * tileSize, y0, 0 ) );
-		_trace2.insertBack( glm::vec3( x0 + tilesX * tileSize - tileSize * 0.5, y0, 0 ) );
+		_trace2.insertBack( glm::vec3( x0 + _tilesX * tileSize - tileSize * 0.5, y0, 0 ) );
 
 		if( !DoublePattern::build( params ) )
 			return false;
 
-		for( int i = 1; i < tilesX; i++ )
+		for( int i = 1; i < _tilesX; i++ )
 		{
 			Trace* t = new Trace( _trace );
 			t->translate( glm::vec3( i * tileSize, 0, 0 ) );
@@ -856,7 +842,7 @@ namespace TextileUX
 
 			_traces.push_back( t );
 		}
-		for( int i = 1; i < tilesY; i++ )
+		for( int i = 1; i < _tilesY; i++ )
 		{
 			Trace* t = new Trace( _trace2 );
 			t->translate( glm::vec3( 0, -i * tileSize, 0 ) );
@@ -872,7 +858,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		//TODO: add order and tilesX/Y
+		//TODO: add order and _tilesX/Y
 		sprintf( tempStr, "%s-d%.01f-j[u%.01f-l%.01f]", getName().c_str(), _dist, _trace2.getJumpSize(), _trace.getJumpSize() );
 
 		return std::string( tempStr );
@@ -905,9 +891,8 @@ namespace TextileUX
 	{
 		std::stringstream sstr;
 		sstr <<
-			"TODO" <<
-			" -> " <<
-			"TODO";
+			_tilesX << " x " << _tilesY << ", " <<
+			_width;
 
 		_sizeString = sstr.str();
 	}
@@ -920,16 +905,14 @@ namespace TextileUX
 		if( !p )
 			return false;
 
-		clear();
-
 		_turns = p->_turns;
 		_dist = p->_dist;
 		_cellDist = p->_cellDist;
 
-		int tilesX = p->_cellsX;
-		int tilesY = p->_cellsY;
+		_tilesX = p->_cellsX;
+		_tilesY = p->_cellsY;
 
-		if( _turns < 1 || tilesX < 1 || tilesY < 1 )
+		if( _turns < 1 || _tilesX < 1 || _tilesY < 1 )
 			return false;
 
 		float sqrt2 = sqrt( 2 );
@@ -937,8 +920,11 @@ namespace TextileUX
 		float triHeight = _turns * ( _dist * ( 1 + sqrt2 ) );
 		float triWidth = triHeight * sqrt2;
 
+
 		float cellSize = ( 2 * triHeight + _cellDist ) / sqrt2;
 		float tileSize = 2 * ( cellSize + _cellDist );
+
+		_width = cellSize * 2 + _cellDist;
 
 		std::vector<glm::vec3> temp;
 
@@ -964,7 +950,6 @@ namespace TextileUX
 			a -= _dist;
 			x -= a;
 		}
-		//temp.push_back( glm::vec3( x, y, 0 ) );	//skip this here, to avoid acute angle
 		temp.push_back( glm::vec3( -_cellDist * 0.5f, _cellDist * 0.25, 0 ) );
 
 		//upper left segment
@@ -1043,23 +1028,23 @@ namespace TextileUX
 		temp.push_back( glm::vec3( tileSize * 0.5f, 0, 0 ) );
 
 
-		x0 = -tileSize * ( tilesX - 1 ) * 0.5f;
-		y0 = tileSize * ( tilesY - 1 ) * 0.5f;
+		x0 = -tileSize * ( _tilesX - 1 ) * 0.5f;
+		y0 = tileSize * ( _tilesY - 1 ) * 0.5f;
 
 		_trace.insertBack( glm::vec3( x0, y0 + tileSize / 2, 0 ) );
-		for( int i = 0; i < tilesY; i++ )
+		for( int i = 0; i < _tilesY; i++ )
 			for( auto& p : temp )
 				_trace.insertBack( glm::vec3( -p.y, -p.x, 0 ) + glm::vec3( x0, y0 - i * tileSize, 0 ) );
 
 		_trace2.insertBack( glm::vec3( x0 - tileSize / 2, y0, 0 ) );
-		for( int i = 0; i < tilesX; i++ )
+		for( int i = 0; i < _tilesX; i++ )
 			for( auto& p : temp )
 				_trace2.insertBack( p + glm::vec3( x0 + i * tileSize, y0, 0 ) );
 
 		if( !DoublePattern::build( params ) )
 			return false;
 
-		for( int i = 1; i < tilesX; i++ )
+		for( int i = 1; i < _tilesX; i++ )
 		{
 			Trace* t = new Trace( _trace );
 			t->translate( glm::vec3( i * tileSize, 0, 0 ) );
@@ -1067,7 +1052,7 @@ namespace TextileUX
 
 			_traces.push_back( t );
 		}
-		for( int i = 1; i < tilesY; i++ )
+		for( int i = 1; i < _tilesY; i++ )
 		{
 			Trace* t = new Trace( _trace2 );
 			t->translate( glm::vec3( 0, -i * tileSize, 0 ) );
@@ -1083,7 +1068,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		//TODO: add tilesX/Y
+		//TODO: add _tilesX/Y
 		sprintf( tempStr, "%s-T%d-d%.03f-cd%.03f-j[u%.03f-l%.03f]", getName().c_str(), _turns, _dist, _cellDist, _trace2.getJumpSize(), _trace.getJumpSize() );
 
 		return std::string( tempStr );

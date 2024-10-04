@@ -83,7 +83,7 @@ float gridSpacing = 0.25f;
 std::vector<VertexBuffer*> grids( 3 );
 
 PatternParamsBase *params = nullptr;
-DoublePattern *pattern = nullptr;
+TiledPattern *pattern = nullptr;
 int stitchProgress = 0;
 
 bool drawCrosshair = false;
@@ -113,7 +113,7 @@ bool cleaned = false;
 
 bool uiActive = true;
 
-//stupid ImGui is stupid. have to use flag.
+//have to use flag to keep track of ImGui init state.
 bool imGuiInitialized = false;
 
 void save()
@@ -542,7 +542,8 @@ void display()
 
 				glColor4fv( glm::value_ptr( Pattern::Color ) );
 
-				printText( "lower:", x0, y0 );
+				sprintf( tempStr, "lower (x%d):", pattern->getTraceCount() );
+				printText( tempStr, x0, y0 );
 				y0 += 15;
 
 				sprintf( tempStr, "  vert:   %d", (int)pattern->getTrace().getVertexCount() );
@@ -559,7 +560,8 @@ void display()
 
 				glColor4fv( glm::value_ptr( DoublePattern::Color2 ) );
 
-				printText( "upper:", x0, y0 );
+				sprintf( tempStr, "upper (x%d):", pattern->getTrace2Count() );
+				printText( tempStr, x0, y0 );
 				y0 += 15;
 
 				sprintf( tempStr, "  vert:   %d", (int) pattern->getTrace2().getVertexCount() );
@@ -947,7 +949,7 @@ void initImGui()
 		}
 	}
 
-	//stupid ImGui is stupid. have to use flag so it won't crash at shutdown when we did not make it until here.
+	//have to use flag to avoid crash it shutdown, in case we did not make it until here.
 	imGuiInitialized = true;
 }
 
@@ -1134,7 +1136,7 @@ void cleanup()
 
 #ifdef USE_GLUT
 
-	//stupid ImGui is stupid. have to use flag to avoid potential crash.
+	//have to use flag to keep track of ImGui init state and to avoid crash.
 	if( imGuiInitialized )
 	{
 		ImGui_ImplOpenGL2_Shutdown();

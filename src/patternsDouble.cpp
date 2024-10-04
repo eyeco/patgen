@@ -44,6 +44,7 @@ namespace TextileUX
 
 	DoublePattern::DoublePattern( const std::string& name ) : 
 		Pattern( name ),
+		_width( 0.0f ),
 		_trace2( Color2 )
 	{}
 
@@ -53,6 +54,8 @@ namespace TextileUX
 	void DoublePattern::clear()
 	{
 		Pattern::clear();
+
+		_width = 0.0f;
 
 		_trace2.clear();
 		_shortcuts.clear();
@@ -339,9 +342,7 @@ namespace TextileUX
 	{
 		std::stringstream sstr;
 		sstr <<
-			"TODO" <<
-			" -> " <<
-			"TODO";
+			"w: " << _width;
 
 		_sizeString = sstr.str();
 	}
@@ -354,8 +355,6 @@ namespace TextileUX
 		if( !p )
 			return false;
 
-		clear();
-
 		_teeth = p->_teeth;
 		_dist = p->_dist;
 		float length = p->getLength();
@@ -363,30 +362,30 @@ namespace TextileUX
 		if( _teeth < 2 || _dist < 0 || length <= 0 )
 			return false;
 
-		float w = ( _teeth - 1 ) * _dist;
+		_width = ( _teeth - 1 ) * _dist;
 		float h = _dist + length;
 
 		int i = 0;
-		_trace2.insertBack( glm::vec3( -w * 0.5f, h * 0.5f, 0 ) );
+		_trace2.insertBack( glm::vec3( -_width * 0.5f, h * 0.5f, 0 ) );
 		for( i = 0; i < _teeth; i++ )
 		{
 			if( i % 2 )
 			{
-				_trace2.insertBack( glm::vec3( i * _dist - w * 0.5f, h * 0.5f, 0 ) );
-				_trace2.insertBack( glm::vec3( i * _dist - w * 0.5f, h * 0.5f - length, 0 ) );
-				_trace2.insertBack( glm::vec3( i * _dist - w * 0.5f, h * 0.5f, 0 ) );
+				_trace2.insertBack( glm::vec3( i * _dist - _width * 0.5f, h * 0.5f, 0 ) );
+				_trace2.insertBack( glm::vec3( i * _dist - _width * 0.5f, h * 0.5f - length, 0 ) );
+				_trace2.insertBack( glm::vec3( i * _dist - _width * 0.5f, h * 0.5f, 0 ) );
 			}
 			else
 			{
-				_trace.insertBack( glm::vec3( i * _dist - w * 0.5f, -h * 0.5f, 0 ) );
-				_trace.insertBack( glm::vec3( i * _dist - w * 0.5f, length - h * 0.5f, 0 ) );
-				_trace.insertBack( glm::vec3( i * _dist - w * 0.5f, -h * 0.5f, 0 ) );
+				_trace.insertBack( glm::vec3( i * _dist - _width * 0.5f, -h * 0.5f, 0 ) );
+				_trace.insertBack( glm::vec3( i * _dist - _width * 0.5f, length - h * 0.5f, 0 ) );
+				_trace.insertBack( glm::vec3( i * _dist - _width * 0.5f, -h * 0.5f, 0 ) );
 			}
 		}
 		if( i % 2 )
-			_trace2.insertBack( glm::vec3( ( i - 1 ) * _dist - w * 0.5f, h * 0.5f, 0 ) );
+			_trace2.insertBack( glm::vec3( ( i - 1 ) * _dist - _width * 0.5f, h * 0.5f, 0 ) );
 		else
-			_trace.insertBack( glm::vec3( ( i - 1 ) * _dist - w * 0.5f, -h * 0.5f, 0 ) );
+			_trace.insertBack( glm::vec3( ( i - 1 ) * _dist - _width * 0.5f, -h * 0.5f, 0 ) );
 
 		return DoublePattern::build( params );
 	}
@@ -424,9 +423,7 @@ namespace TextileUX
 	{
 		std::stringstream sstr;
 		sstr <<
-			"TODO" <<
-			" -> " <<
-			"TODO";
+			"w: " << _width;
 
 		_sizeString = sstr.str();
 	}
@@ -439,32 +436,30 @@ namespace TextileUX
 		if( !p )
 			return false;
 
-		clear();
-
 		_windings = p->_windings;
 		_dist = p->_dist;
 
 		if( _windings < 1 || _dist <= 0.0f )
 			return false;
 
-		float w = 2 * _dist * _windings;
+		_width = 2 * _dist * _windings;
 
-		_trace.insertBack( glm::vec3( -w * 0.5f, -w * 0.5f, 0 ) );
-		_trace2.insertBack( glm::vec3( w * 0.5f, -w * 0.5f, 0 ) );
+		_trace.insertBack( glm::vec3( -_width * 0.5f, -_width * 0.5f, 0 ) );
+		_trace2.insertBack( glm::vec3( _width * 0.5f, -_width * 0.5f, 0 ) );
 		for( int i = 0; i < _windings; i++ )
 		{
-			_trace.insertBack( glm::vec3( -w * 0.5f + _dist * ( 2 * i + 0.5f ), -w * 0.5f, 0 ) );
-			_trace.insertBack( glm::vec3( -w * 0.5f + _dist * ( 2 * i + 0.5f ), w * 0.5f, 0 ) );
-			_trace.insertBack( glm::vec3( -w * 0.5f + _dist * ( 2 * i + 1.5f ), w * 0.5f, 0 ) );
-			_trace.insertBack( glm::vec3( -w * 0.5f + _dist * ( 2 * i + 1.5f ), -w * 0.5f, 0 ) );
+			_trace.insertBack( glm::vec3( -_width * 0.5f + _dist * ( 2 * i + 0.5f ), -_width * 0.5f, 0 ) );
+			_trace.insertBack( glm::vec3( -_width * 0.5f + _dist * ( 2 * i + 0.5f ), _width * 0.5f, 0 ) );
+			_trace.insertBack( glm::vec3( -_width * 0.5f + _dist * ( 2 * i + 1.5f ), _width * 0.5f, 0 ) );
+			_trace.insertBack( glm::vec3( -_width * 0.5f + _dist * ( 2 * i + 1.5f ), -_width * 0.5f, 0 ) );
 
-			_trace2.insertBack( glm::vec3( w * 0.5f, -w * 0.5f + _dist * ( 2 * i + 0.5f ), 0 ) );
-			_trace2.insertBack( glm::vec3( -w * 0.5f, -w * 0.5f + _dist * ( 2 * i + 0.5f ), 0 ) );
-			_trace2.insertBack( glm::vec3( -w * 0.5f, -w * 0.5f + _dist * ( 2 * i + 1.5f ), 0 ) );
-			_trace2.insertBack( glm::vec3( w * 0.5f, -w * 0.5f + _dist * ( 2 * i + 1.5f ), 0 ) );
+			_trace2.insertBack( glm::vec3( _width * 0.5f, -_width * 0.5f + _dist * ( 2 * i + 0.5f ), 0 ) );
+			_trace2.insertBack( glm::vec3( -_width * 0.5f, -_width * 0.5f + _dist * ( 2 * i + 0.5f ), 0 ) );
+			_trace2.insertBack( glm::vec3( -_width * 0.5f, -_width * 0.5f + _dist * ( 2 * i + 1.5f ), 0 ) );
+			_trace2.insertBack( glm::vec3( _width * 0.5f, -_width * 0.5f + _dist * ( 2 * i + 1.5f ), 0 ) );
 		}
-		_trace.insertBack( glm::vec3( w * 0.5f, -w * 0.5f, 0 ) );
-		_trace2.insertBack( glm::vec3( w * 0.5f, w * 0.5f, 0 ) );
+		_trace.insertBack( glm::vec3( _width * 0.5f, -_width * 0.5f, 0 ) );
+		_trace2.insertBack( glm::vec3( _width * 0.5f, _width * 0.5f, 0 ) );
 
 		return DoublePattern::build( params );
 	}
@@ -502,9 +497,7 @@ namespace TextileUX
 	{
 		std::stringstream sstr;
 		sstr <<
-			"TODO" <<
-			" -> " <<
-			"TODO";
+			"w: " << _width;
 
 		_sizeString = sstr.str();
 	}
@@ -517,8 +510,6 @@ namespace TextileUX
 		if( !p )
 			return false;
 
-		clear();
-
 		_turns = p->_turns;
 		_dist = p->_dist;
 
@@ -526,11 +517,11 @@ namespace TextileUX
 			return false;
 
 		int dir = 0; // 0, 1, 2, 3 -> r, d, l, u
-		float w = ( _turns + 1 ) * _dist * 2;
+		_width = _turns * _dist * 2;
 
 		std::vector<glm::vec3> temp;
 
-		glm::vec3 v( -w * 0.5f, w * 0.5f - _dist, 0 );
+		glm::vec3 v( -( _width + 2 * _dist ) * 0.5f, _width * 0.5f, 0 );
 		temp.push_back( v );
 
 		for( int i = 0; i <= _turns; i++, dir = ( dir + 1 ) % 4 )
@@ -624,9 +615,7 @@ namespace TextileUX
 	{
 		std::stringstream sstr;
 		sstr <<
-			"TODO" <<
-			" -> " <<
-			"TODO";
+			"w: " << _width;
 
 		_sizeString = sstr.str();
 	}
@@ -639,8 +628,6 @@ namespace TextileUX
 		if( !p )
 			return false;
 
-		clear();
-
 		_turns = p->_turns;
 		_dist = p->_dist;
 
@@ -648,11 +635,11 @@ namespace TextileUX
 			return false;
 
 		int dir = 0; // 0, 1, 2, 3 -> r, d, l, u
-		float w = _turns * _dist * 2;
+		_width = _turns * _dist * 2;
 
 		std::vector<glm::vec3> temp;
 
-		glm::vec3 v( -w * 0.5f, w * 0.5f, 0 );
+		glm::vec3 v( -_width * 0.5f, _width * 0.5f, 0 );
 		temp.push_back( v );
 
 		for( int i = 0; i <= _turns * 2; i++, dir = ( dir + 1 ) % 4 )
@@ -721,9 +708,7 @@ namespace TextileUX
 	{
 		std::stringstream sstr;
 		sstr <<
-			"TODO" <<
-			" -> " <<
-			"TODO";
+			"w: " << _width;
 
 		_sizeString = sstr.str();
 	}
@@ -736,20 +721,20 @@ namespace TextileUX
 		if( !p )
 			return false;
 
-		clear();
-
 		_order = p->_order;
 		_dist = p->_dist;
 
 		if( _order < 1 )
 			return false;
 
-		int width = pow( 2, _order );
-		int cells = width * width;
+		int w = pow( 2, _order );
+		int cells = w * w;
+
+		_width = w * _dist * 2;
 
 		glm::vec3 c(
-			width * _dist,
-			width * _dist,
+			_width * 0.5f,
+			_width * 0.5f,
 			0 );
 
 		std::vector<glm::vec3> temp;
@@ -758,7 +743,7 @@ namespace TextileUX
 		int y = 0;
 		for( int i = 0; i < cells; i++ )
 		{
-			d2xy( width, i, &x, &y );
+			d2xy( w, i, &x, &y );
 
 			glm::vec3 v( glm::vec3( ( x + 0.5f ) * _dist * 2, ( y + 0.5f ) * _dist * 2, 0 ) - c );
 
@@ -880,9 +865,7 @@ namespace TextileUX
 	{
 		std::stringstream sstr;
 		sstr <<
-			"TODO" <<
-			" -> " <<
-			"TODO";
+			"w: " << _width;
 
 		_sizeString = sstr.str();
 	}
@@ -929,8 +912,6 @@ namespace TextileUX
 		if( !p )
 			return false;
 
-		clear();
-
 		_order = p->_order;
 		_dist = p->_dist;
 
@@ -940,16 +921,17 @@ namespace TextileUX
 		std::vector<glm::vec3> temp;
 		recurse( 0, 0, _order, false, false, temp );
 
-		int width = pow( 3, _order );
+		int w = pow( 3, _order );
+
+		_width = w * _dist * 2.0f;
 
 		glm::vec3 c(
-			( width - 1 ) * _dist,
-			( width - 1 ) * _dist,
+			_width * 0.5f - _dist,
+			_width * 0.5f - _dist,
 			0 );
 
 		for( auto& p : temp )
 			p = p * _dist * 2.0f - c;
-
 
 		std::vector<glm::vec3> u( temp );
 

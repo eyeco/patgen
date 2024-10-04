@@ -15,8 +15,11 @@ namespace TextileUX
 			PatternParamsBase(),
 			_cellsX( 2 ),
 			_cellsY( 2 ),
-			_cellDist( 1 )
-		{}
+			_cellDist( 0.1f )
+		{
+			_dist = 0.1f;
+		}
+
 		virtual ~TiledPatternParams() {}
 
 		virtual bool drawUI();
@@ -25,6 +28,8 @@ namespace TextileUX
 	class TiledPattern : public DoublePattern
 	{
 	protected:
+		int _tilesX;
+		int _tilesY;
 
 		virtual void clear();
 
@@ -43,6 +48,9 @@ namespace TextileUX
 
 		virtual void draw();
 		virtual bool save();
+
+		size_t getTraceCount() const { return _traces.size(); }
+		size_t getTrace2Count() const { return _traces2.size(); }
 
 		float getTotalRunLength() const;
 		size_t getTotalStitchCount() const;
@@ -107,7 +115,7 @@ namespace TextileUX
 
 			PatternParams() :
 				TiledPatternParams(),
-				_turns( 10 )
+				_turns( 7 )
 			{}
 
 			virtual bool drawUI();
@@ -140,7 +148,7 @@ namespace TextileUX
 
 			PatternParams() :
 				TiledPatternParams(),
-				_turns( 4 )
+				_turns( 10 )
 			{}
 
 			virtual bool drawUI();
