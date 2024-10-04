@@ -394,7 +394,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-d%.01f-t%d-j[u%.01f-l%.01f]", getName().c_str(), _dist, _teeth, _trace2.getJumpSize(), _trace.getJumpSize() );
+		sprintf( tempStr, "%s-T%d-d%.03f-j%.03f", getName().c_str(), _teeth, _dist, _trace.getJumpSize() );
 
 		return std::string( tempStr );
 	}
@@ -468,7 +468,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-d%.01f-w%d-j[u%.01f-l%.01f]", getName().c_str(), _dist, _windings, _trace2.getJumpSize(), _trace.getJumpSize() );
+		sprintf( tempStr, "%s-W%d-d%.03f-j%.03f", getName().c_str(), _windings, _dist, _trace.getJumpSize() );
 
 		return std::string( tempStr );
 	}
@@ -584,7 +584,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-d%.01f-t%d-j[u%.01f-l%.01f]", getName().c_str(), _dist, _turns, _trace2.getJumpSize(), _trace.getJumpSize() );
+		sprintf( tempStr, "%s-T%d-d%.03f-j%.03f", getName().c_str(), _turns, _dist, _trace.getJumpSize() );
 
 		return std::string( tempStr );
 	}
@@ -678,7 +678,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-d%.01f-t%d-j[u%.01f-l%.01f]", getName().c_str(), _dist, _turns, _trace2.getJumpSize(), _trace.getJumpSize() );
+		sprintf( tempStr, "%s-T%d-d%.03f-j%.03f", getName().c_str(), _turns, _dist, _trace.getJumpSize() );
 
 		return std::string( tempStr );
 	}
@@ -835,7 +835,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-d%.01f-o%d-j[u%.01f-l%.01f]", getName().c_str(), _dist, _order, _trace2.getJumpSize(), _trace.getJumpSize() );
+		sprintf( tempStr, "%s-O%d-d%.03f-j%.03f", getName().c_str(), _order, _dist, _trace.getJumpSize() );
 
 		return std::string( tempStr );
 	}
@@ -1010,7 +1010,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-d%.01f-o%d-j[u%.01f-l%.01f]", getName().c_str(), _dist, _order, _trace2.getJumpSize(), _trace.getJumpSize() );
+		sprintf( tempStr, "%s-O%d-d%.03f-j%.03f", getName().c_str(), _order, _dist, _trace.getJumpSize() );
 
 		return std::string( tempStr );
 	}

@@ -395,8 +395,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		//TODO: add windings and _tilesX/Y
-		sprintf( tempStr, "%s-d%.01f-j[u%.01f-l%.01f]", getName().c_str(), _dist, _trace2.getJumpSize(), _trace.getJumpSize() );
+		sprintf( tempStr, "%s-%dx%d-W%d-d%.03f-cd%.03f-j%.03f", getName().c_str(), _tilesX, _tilesY, _windings, _dist, _cellDist, _trace.getJumpSize() );
 
 		return std::string( tempStr );
 	}
@@ -520,8 +519,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		//TODO: add turns and _tilesX/Y
-		sprintf( tempStr, "%s-d%.01f-j[u%.01f-l%.01f]", getName().c_str(), _dist, _trace2.getJumpSize(), _trace.getJumpSize() );
+		sprintf( tempStr, "%s-%dx%d-T%d-d%.03f-cd%.03f-j%.03f", getName().c_str(), _tilesX, _tilesY, _turns, _dist, _cellDist, _trace.getJumpSize() );
 
 		return std::string( tempStr );
 	}
@@ -672,8 +670,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		//TODO: add turns and _tilesX/Y
-		sprintf( tempStr, "%s-d%.01f-j[u%.01f-l%.01f]", getName().c_str(), _dist, _trace2.getJumpSize(), _trace.getJumpSize() );
+		sprintf( tempStr, "%s-%dx%d-T%d-d%.03f-j%.03f", getName().c_str(), _tilesX, _tilesY, _turns, _dist, _trace.getJumpSize() );
 
 		return std::string( tempStr );
 	}
@@ -858,8 +855,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		//TODO: add order and _tilesX/Y
-		sprintf( tempStr, "%s-d%.01f-j[u%.01f-l%.01f]", getName().c_str(), _dist, _trace2.getJumpSize(), _trace.getJumpSize() );
+		sprintf( tempStr, "%s-%dx%d-O%d-d%.03f-cd%.03f-j%.03f", getName().c_str(), _tilesX, _tilesY, _order, _dist, _cellDist, _trace.getJumpSize() );
 
 		return std::string( tempStr );
 	}
@@ -1068,8 +1064,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		//TODO: add _tilesX/Y
-		sprintf( tempStr, "%s-T%d-d%.03f-cd%.03f-j[u%.03f-l%.03f]", getName().c_str(), _turns, _dist, _cellDist, _trace2.getJumpSize(), _trace.getJumpSize() );
+		sprintf( tempStr, "%s-%dx%d-T%d-d%.03f-cd%.03f-j%.03f", getName().c_str(), _tilesX, _tilesY, _turns, _dist, _cellDist, _trace.getJumpSize() );
 
 		return std::string( tempStr );
 	}

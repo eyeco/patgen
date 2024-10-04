@@ -14,7 +14,7 @@ namespace TextileUX
 		std::vector<glm::vec3> _stitches;	//actual stitches, resulting from resampling, e.g. due to maximum jump size supported by machine
 
 		float _jumpSize;
-		float _minJumpSize;
+		//float _minJumpSize;
 
 		float _runLength;
 
@@ -46,9 +46,6 @@ namespace TextileUX
 
 		bool removeStitch( int index );
 		bool removeStitches( std::vector<int> indices );
-
-		//std::vector<glm::vec3> &getVerts() { return _verts; }
-		//const std::vector<glm::vec3> &getVerts() const { return _verts; }
 
 		std::vector<glm::vec3> &getStitches() { return _stitches; }
 		const std::vector<glm::vec3> &getStitches() const { return _stitches; }

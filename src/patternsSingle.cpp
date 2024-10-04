@@ -61,7 +61,6 @@ namespace TextileUX
 		float s = 0;
 		int dir = 1;
 
-		//float x = 0;
 		float y = 0;
 
 		while( s < _diameter )
@@ -75,27 +74,6 @@ namespace TextileUX
 
 			temp.push_back( glm::vec3( x0, y, 0 ) );
 			temp.push_back( glm::vec3( x1, y, 0 ) );
-
-			//x = x0;
-
-			/*
-			while( true )
-			{
-				if( dir < 0 && x < x1 )
-					break;
-				if( dir > 0 && x > x1 )
-					break;
-
-				temp.push_back( glm::vec3( x, y, 0 ) );
-				x += dir * jump;
-			}
-
-			//remove last if too close to the edge, before inserting terminating stitch at (x1,y)
-			if( temp.size() && abs( temp.back().x - x1 ) < jump * MIN_JUMP_FACTOR )
-				temp.pop_back();
-			//add line-terminating stitch to have it exactly at the edge
-			temp.push_back( glm::vec3( x1, y, 0 ) );
-			*/
 
 			s += _dist;
 
@@ -150,7 +128,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-D%.03f-d%.04f-j%.03f", getName().c_str(), _diameter, _dist, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-D%.03f-d%.03f-j%.03f", getName().c_str(), _diameter, _dist, _trace.getJumpSize() );
 
 		return std::string( tempStr );
 	}
@@ -283,7 +261,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-D%.03f-d%.04f-ID%.03f-j[%.03f-%.03f]", getName().c_str(), _diameter, _dist, _innerDiameter, _trace.getJumpSize(), _innerJumpSize );
+		sprintf( tempStr, "%s-D%.03f-ID%.03f-d%.03f-j[%.03f-i%.03f]", getName().c_str(), _diameter, _innerDiameter, _dist, _trace.getJumpSize(), _innerJumpSize );
 
 		return std::string( tempStr );
 	}
@@ -373,7 +351,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-W%.03f-d%.04f-j%.03f", getName().c_str(), _width, _dist, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-W%.03f-d%.03f-j%.03f", getName().c_str(), _width, _dist, _trace.getJumpSize() );
 
 		return std::string( tempStr );
 	}
@@ -428,14 +406,11 @@ namespace TextileUX
 
 		std::vector<glm::vec3> temp;
 
-		//float jump = p->_jumpSize;
-
 		float diagonal = _width * sqrt( 2 );
 		float halfDiagonal = diagonal / 2;
 
 		int dir = 1;
 
-		//float x = 0;
 		float y = halfDiagonal;
 
 		while( y > -halfDiagonal )
@@ -468,7 +443,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-W%.03f-d%.04f-j%.03f", getName().c_str(), _width, _dist, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-W%.03f-d%.03f-j%.03f", getName().c_str(), _width, _dist, _trace.getJumpSize() );
 
 		return std::string( tempStr );
 	}
@@ -544,8 +519,6 @@ namespace TextileUX
 		std::vector<glm::vec3> temp;
 
 		float halfWidth = _width * 0.5f;
-
-		//float x = -halfWidth;
 		float y = halfWidth - _dist * 0.5f;
 
 		int dir = 1;
@@ -567,7 +540,6 @@ namespace TextileUX
 
 		int xDir = dir;
 		float x = -( halfWidth - _dist * 0.5f ) * xDir;
-		//y = -halfWidth;
 
 		dir = 1;
 
@@ -596,7 +568,7 @@ namespace TextileUX
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-W%.03f-d%.04f-j%.03f", getName().c_str(), _width, _dist, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-W%.03f-d%.03f-j%.03f", getName().c_str(), _width, _dist, _trace.getJumpSize() );
 
 		return std::string( tempStr );
 	}

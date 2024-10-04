@@ -65,7 +65,7 @@ namespace TextileUX
 				PatternParamsBase(),
 				_diameter( 10 ),
 				_innerDiameter( 0 ),
-				_innerJumpSize( 0.1 )
+				_innerJumpSize( 0.1f )
 			{}
 
 			virtual bool drawUI();

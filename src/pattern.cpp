@@ -12,7 +12,7 @@ namespace TextileUX
 	Trace::Trace( const glm::vec4 &color ) :
 		_color( color ),
 		_jumpSize( 0 ),
-		_minJumpSize( 0 ),
+		//_minJumpSize( 0 ),
 		_runLength( 0.0f ),
 		_vbPath( "path" ),
 		_vbStitches( "stitches" )
@@ -23,7 +23,7 @@ namespace TextileUX
 		_verts( t._verts ),
 		_stitches( t._stitches ),
 		_jumpSize( t._jumpSize ),
-		_minJumpSize( t._minJumpSize ),
+		//_minJumpSize( t._minJumpSize ),
 		_runLength( t._runLength ),
 		_vbPath( "path" ),
 		_vbStitches( "stitches" )
@@ -77,6 +77,8 @@ namespace TextileUX
 			_stitches = _verts;
 
 		/*
+		* TODO: fix this, it seems like this does not get along with FSR and TexYZ generators
+		* 
 		//for all stitches that are too close remove the earlier one
 		// minimum jump size is 25% of targeted jump size
 		float mj2 = _minJumpSize * _minJumpSize;
@@ -97,7 +99,7 @@ namespace TextileUX
 	bool Trace::rebuild( float jumpSize, float minJumpSize )
 	{
 		_jumpSize = jumpSize;
-		_minJumpSize = minJumpSize < 0.00000001 ? jumpSize * MIN_JUMP_FACTOR : minJumpSize;
+		//_minJumpSize = minJumpSize < 0.00000001 ? jumpSize * MIN_JUMP_FACTOR : minJumpSize;
 
 		if( !resample() )
 			return false;
@@ -233,8 +235,8 @@ namespace TextileUX
 	{
 		if( ImGui::SliderFloat( "jump size", &_jumpSize, 0.1f, 30.0f ) )
 			_invalidated = true;
-		if( ImGui::SliderFloat( "min jump size", &_minJumpSize, 0.0f, 1.0f ) )
-			_invalidated = true;
+		//if( ImGui::SliderFloat( "min jump size", &_minJumpSize, 0.0f, 1.0f ) )
+		//	_invalidated = true;
 		if( ImGui::SliderFloat( "trace dist", &_dist, 0.1, 10.0f ) )
 			_invalidated = true;
 
