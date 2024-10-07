@@ -6,13 +6,13 @@ _TODO:_ general project description
 
 _TODO:_ general project description
 
-Pattern generator for embroidered resistive force sensors using space-filling patterns (see related [ACM CHI 2020 paper](https://doi.org/10.1145/3313831.3376305) by Aigner et al.)
+Pattern generator for embroidered resistive force sensors using space-filling patterns (see related [ACM CHI 2020 paper](https://doi.org/10.1145/3313831.3376305) "Embroidered Resistive Pressure Sensors: A Novel Approach for Textile Interfaces" by Aigner et al.)
 
 ## PatGenTexYZ
 
 _TODO:_ general project description
 
-Pattern generator for embroidered capacitive multitouch of enameled wires (see related [ACM CHI 2021 paper](https://doi.org/10.1145/3411764.3445479) by Aigner et al.)
+Pattern generator for embroidered capacitive multitouch of enameled wires (see related [ACM CHI 2021 paper](https://doi.org/10.1145/3411764.3445479) "TexYZ: Embroidering Enameled Wires for Three Degree-of-Freedom Mutual Capacitive Sensing" by Aigner et al.)
 
 ## PatGenShielding
 
