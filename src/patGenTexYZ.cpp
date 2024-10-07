@@ -1,3 +1,14 @@
+/*---------------------------------------------------------------------------------------------
+* Copyright (C) 2024 eyeco https://github.com/eyeco https://www.rolandaigner.com
+* This file is part of patgen
+*
+* Licensed under the GPL3 License. See LICENSE file in the package root for license information.
+*
+* You should have received a copy of the GNU General Public License
+* along with this code. If not, see < http://www.gnu.org/licenses/>.
+*--------------------------------------------------------------------------------------------*/
+
+
 #include <mutex>
 #include <thread>
 
@@ -102,11 +113,6 @@ char imGuiIniFileName[1024];
 std::string statusString( "ready" );
 
 Unit unit = U_MM;
-
-namespace TextileUX
-{
-	extern double globalTime;
-}
 
 bool quit = false;
 bool cleaned = false;
@@ -326,16 +332,7 @@ void specialUp( int key, int x, int y )
 
 void update()
 {
-	static auto prevTime = std::chrono::system_clock::now();
-	auto currentTime = std::chrono::system_clock::now();
-	std::chrono::duration<double> diff = currentTime - prevTime;
-	prevTime = currentTime;
-
-	double dt = diff.count();
-	timeAccu += dt;
-	::globalTime += dt;
-
-	//update potential temporal stuff here
+	//update (potential time-depending) stuff here
 }
 
 void display()

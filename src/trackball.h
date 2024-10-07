@@ -1,3 +1,14 @@
+/*---------------------------------------------------------------------------------------------
+* Copyright (C) 2024 eyeco https://github.com/eyeco https://www.rolandaigner.com
+* This file is part of patgen
+*
+* Licensed under the GPL3 License. See LICENSE file in the package root for license information.
+*
+* You should have received a copy of the GNU General Public License
+* along with this code. If not, see < http://www.gnu.org/licenses/>.
+*--------------------------------------------------------------------------------------------*/
+
+
 #pragma once
 
 #include <common.h>
@@ -80,33 +91,5 @@ namespace TextileUX
 		const glm::vec3& getTranslation() const { return _trans; }
 		float getRotation() const { return _rotation; }
 		float getScaleExp() const { return _scaleExp; }
-	};
-
-	class Trackball3D : public Trackball
-	{
-	private:
-		bool _relativeMode;
-
-		glm::vec3 _trans;
-
-		float _motionSpeed;
-		float _wheelSpeed;
-
-		glm::vec3 _euler;
-		float _rotationSpeed;
-
-		glm::vec3 _defaultTrans;
-		glm::vec3 _defaultEuler;
-
-		virtual void update();
-		virtual void motion( const glm::ivec2 &pos );
-		virtual void mouseWheelMotion( int direction, const glm::ivec2 &pos );
-
-	public:
-		Trackball3D();
-		Trackball3D( const glm::vec3 &t, const glm::vec3 &e );
-		~Trackball3D();
-
-		virtual void reset();
 	};
 }

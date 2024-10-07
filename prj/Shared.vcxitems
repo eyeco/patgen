@@ -14,10 +14,8 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)..\shaders\multiChannel.frag" />
-    <None Include="$(MSBuildThisFileDirectory)..\shaders\passthrough.frag" />
-    <None Include="$(MSBuildThisFileDirectory)..\shaders\passthrough.vert" />
-    <None Include="$(MSBuildThisFileDirectory)..\shaders\singleChannel.frag" />
+    <None Include="$(MSBuildThisFileDirectory)..\LICENSE" />
+    <None Include="$(MSBuildThisFileDirectory)..\README.md" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\src\common.cpp" />

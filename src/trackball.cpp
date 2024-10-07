@@ -1,10 +1,17 @@
+/*---------------------------------------------------------------------------------------------
+* Copyright (C) 2024 eyeco https://github.com/eyeco https://www.rolandaigner.com
+* This file is part of patgen
+*
+* Licensed under the GPL3 License. See LICENSE file in the package root for license information.
+*
+* You should have received a copy of the GNU General Public License
+* along with this code. If not, see < http://www.gnu.org/licenses/>.
+*--------------------------------------------------------------------------------------------*/
+
+
 #include <trackball.h>
 
 #include <glm/gtx/transform.hpp>
-
-//test
-#include <iostream>
-//---
 
 namespace TextileUX
 {
@@ -172,100 +179,6 @@ namespace TextileUX
 			_m = glm::translate( _trans )
 				* glm::rotate( _rotation, unitZ() )
 				* glm::scale( glm::vec3( max( 0.000001f, pow( _scaleBase, _scaleExp ) ) ) )
-				;
-		}
-	}
-
-
-
-
-	Trackball3D::Trackball3D() :
-		Trackball(),
-		_relativeMode( false ),
-		_trans( 0 ),
-		_motionSpeed( 0.01f ),
-		_wheelSpeed( 0.1f ),
-		_euler( 0 ),
-		_rotationSpeed( 0.01f )
-	{}
-
-	Trackball3D::Trackball3D( const glm::vec3 &t, const glm::vec3 &e ) :
-		Trackball(),
-		_relativeMode( false ),
-		_trans( t ),
-		_motionSpeed( 0.01f ),
-		_wheelSpeed( 0.1f ),
-		_euler( e ),
-		_rotationSpeed( 0.01f ),
-		_defaultTrans( t ),
-		_defaultEuler( e )
-	{
-		reset();
-	}
-
-	Trackball3D::~Trackball3D()
-	{}
-
-	void Trackball3D::reset()
-	{
-		_m = glm::translate( _defaultTrans )
-			* glm::rotate( _defaultEuler.x, unitX() )
-			* glm::rotate( _defaultEuler.y, unitY() )
-			* glm::rotate( _defaultEuler.z, unitZ() );
-	}
-
-	void Trackball3D::motion( const glm::ivec2 &pos )
-	{
-		glm::ivec2 d( _first ? glm::ivec2( 0 ) : pos - _oldPos );
-
-		if( _buttonMask & ( 0x01 << 0 ) ) //left
-		{
-			if( _relativeMode )
-				_m = glm::rotate( d.x * _rotationSpeed, unitY() ) * glm::rotate( d.y * _rotationSpeed, unitX() ) * _m;
-			else
-				_euler += glm::vec3( d.y, d.x, 0 ) * _rotationSpeed;
-		}
-		if( _buttonMask & ( 0x01 << 1 ) ) //middle
-		{
-			if( _relativeMode )
-				_m = glm::translate( glm::vec3( 0, 0, -d.y ) * _motionSpeed ) * _m;
-			else
-				_trans += glm::vec3( 0, 0, -d.y ) * _motionSpeed;
-		}
-		if( _buttonMask & ( 0x01 << 2 ) ) //right
-		{
-			if( _relativeMode )
-				_m = glm::translate( glm::vec3( d.x, -d.y, 0 ) * _motionSpeed ) * _m;
-			else
-				_trans += glm::vec3( d.x, -d.y, 0 ) * _motionSpeed;
-		}
-
-		if( _buttonMask )
-			update();
-
-		_oldPos = pos;
-		_first = false;
-	}
-
-	void Trackball3D::mouseWheelMotion( int direction, const glm::ivec2 &pos )
-	{
-		if( _relativeMode )
-			_m = glm::translate( glm::vec3( 0, 0, direction ) * _wheelSpeed ) * _m;
-		else
-			_trans += glm::vec3( 0, 0, direction ) * _wheelSpeed;
-		update();
-
-		motion( pos );
-	}
-
-	void Trackball3D::update()
-	{
-		if( !_relativeMode )
-		{
-			_m = glm::translate( _trans )
-				* glm::rotate( _euler.x, unitX() )
-				* glm::rotate( _euler.y, unitY() )
-				* glm::rotate( _euler.z, unitZ() )
 				;
 		}
 	}
