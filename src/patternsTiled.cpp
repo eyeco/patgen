@@ -386,7 +386,7 @@ namespace TextileUX
 		{
 			Trace *t = new Trace( _trace );
 			t->translate( glm::vec3( i * cellDiagonal, 0, 0 ) );
-			t->rebuild( params->_jumpSize, params->_minJumpSize );
+			t->rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor );
 
 			_traces.push_back( t );
 		}
@@ -394,7 +394,7 @@ namespace TextileUX
 		{
 			Trace *t = new Trace( _trace2 );
 			t->translate( glm::vec3( 0, i * cellDiagonal, 0 ) );
-			t->rebuild( params->_jumpSize, params->_minJumpSize );
+			t->rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor );
 
 			_traces2.push_back( t );
 		}
@@ -510,7 +510,7 @@ namespace TextileUX
 		{
 			Trace* t = new Trace( _trace );
 			t->translate( glm::vec3( i * cellDiagonal, 0, 0 ) );
-			t->rebuild( params->_jumpSize, params->_minJumpSize );
+			t->rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor );
 
 			_traces.push_back( t );
 		}
@@ -518,7 +518,7 @@ namespace TextileUX
 		{
 			Trace* t = new Trace( _trace2 );
 			t->translate( glm::vec3( 0, i * cellDiagonal, 0 ) );
-			t->rebuild( params->_jumpSize, params->_minJumpSize );
+			t->rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor );
 
 			_traces2.push_back( t );
 		}
@@ -661,7 +661,7 @@ namespace TextileUX
 		{
 			Trace* t = new Trace( _trace );
 			t->translate( glm::vec3( i * ( w - 2 * _dist ), 0, 0 ) );
-			t->rebuild( params->_jumpSize, params->_minJumpSize );
+			t->rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor );
 
 			_traces.push_back( t );
 		}
@@ -669,7 +669,7 @@ namespace TextileUX
 		{
 			Trace* t = new Trace( _trace2 );
 			t->translate( glm::vec3( 0, -i * ( w - 2 * _dist ), 0 ) );
-			t->rebuild( params->_jumpSize, params->_minJumpSize );
+			t->rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor );
 
 			_traces2.push_back( t );
 		}
@@ -846,7 +846,7 @@ namespace TextileUX
 		{
 			Trace* t = new Trace( _trace );
 			t->translate( glm::vec3( i * tileSize, 0, 0 ) );
-			t->rebuild( params->_jumpSize, params->_minJumpSize );
+			t->rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor );
 
 			_traces.push_back( t );
 		}
@@ -854,7 +854,7 @@ namespace TextileUX
 		{
 			Trace* t = new Trace( _trace2 );
 			t->translate( glm::vec3( 0, -i * tileSize, 0 ) );
-			t->rebuild( params->_jumpSize, params->_minJumpSize );
+			t->rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor );
 
 			_traces2.push_back( t );
 		}
@@ -1055,7 +1055,7 @@ namespace TextileUX
 		{
 			Trace* t = new Trace( _trace );
 			t->translate( glm::vec3( i * tileSize, 0, 0 ) );
-			t->rebuild( params->_jumpSize, params->_minJumpSize );
+			t->rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor );
 
 			_traces.push_back( t );
 		}
@@ -1063,7 +1063,7 @@ namespace TextileUX
 		{
 			Trace* t = new Trace( _trace2 );
 			t->translate( glm::vec3( 0, -i * tileSize, 0 ) );
-			t->rebuild( params->_jumpSize, params->_minJumpSize );
+			t->rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor );
 
 			_traces2.push_back( t );
 		}

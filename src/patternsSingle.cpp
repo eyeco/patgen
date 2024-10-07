@@ -474,20 +474,7 @@ namespace TextileUX
 			_jumpSize = _jumpMult * _dist;
 		}
 
-		if( ImGui::SliderFloat( "min jump size", &_minJumpSize, 0.0f, 1.0f ) )
-			_invalidated = true;
-		if( ImGui::SliderFloat( "trace dist", &_dist, 0.1f, 10.0f ) )
-			_invalidated = true;
-
-		ScopedImGuiDisable disable( !_invalidated );
-
-		if( ImGui::Button( "rebuild" ) )
-		{
-			_invalidated = false;
-			return true;
-		}
-
-		return false;
+		return PatternParamsBase::drawUI();
 	}
 
 	BoustrophedonQuadDouble::BoustrophedonQuadDouble() :

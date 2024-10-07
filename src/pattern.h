@@ -25,7 +25,9 @@ namespace TextileUX
 		std::vector<glm::vec3> _stitches;	//actual stitches, resulting from resampling, e.g. due to maximum jump size supported by machine
 
 		float _jumpSize;
-		//float _minJumpSize;
+
+		bool _useMinJumpFactor;
+		float _minJumpFactor;
 
 		float _runLength;
 
@@ -44,7 +46,7 @@ namespace TextileUX
 		bool validate();
 
 		void clear();
-		bool rebuild( float jumpSize, float minJumpSize );
+		bool rebuild( float jumpSize, bool useMinJumpFactor, float minJumpFactor );
 
 		float getJumpSize() const { return _jumpSize; }
 
@@ -76,13 +78,17 @@ namespace TextileUX
 
 	public:
 		float _jumpSize;
-		float _minJumpSize;
+
+		bool _useMinJumpFactor;
+		float _minJumpFactor;
+
 		float _dist;
 
 		PatternParamsBase() :
 			_invalidated( false ),
 			_jumpSize( 1 ),
-			_minJumpSize( 0 ),
+			_useMinJumpFactor( false ),
+			_minJumpFactor( 0 ),
 			_dist( 1 )
 		{}
 		virtual ~PatternParamsBase() {}

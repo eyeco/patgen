@@ -159,7 +159,7 @@ namespace TextileUX
 		if( !params )
 			return false;
 
-		if( !_trace2.rebuild( params->_jumpSize, params->_minJumpSize ) )
+		if( !_trace2.rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor ) )
 			return false;
 
 		if( !Pattern::build( params ) )

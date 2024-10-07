@@ -16,14 +16,13 @@
 #include <sstream>
 #include <iostream>
 
-#define MIN_JUMP_FACTOR		0.20f
-
 namespace TextileUX
 {
 	Trace::Trace( const glm::vec4 &color ) :
 		_color( color ),
 		_jumpSize( 0 ),
-		//_minJumpSize( 0 ),
+		_useMinJumpFactor( false ),
+		_minJumpFactor( 0 ),
 		_runLength( 0.0f ),
 		_vbPath( "path" ),
 		_vbStitches( "stitches" )
@@ -34,7 +33,7 @@ namespace TextileUX
 		_verts( t._verts ),
 		_stitches( t._stitches ),
 		_jumpSize( t._jumpSize ),
-		//_minJumpSize( t._minJumpSize ),
+		_minJumpFactor( t._minJumpFactor ),
 		_runLength( t._runLength ),
 		_vbPath( "path" ),
 		_vbStitches( "stitches" )
@@ -87,30 +86,31 @@ namespace TextileUX
 		else
 			_stitches = _verts;
 
-		/*
-		* TODO: fix this, it seems like this does not get along with FSR and TexYZ generators
-		* 
-		//for all stitches that are too close remove the earlier one
-		// minimum jump size is 25% of targeted jump size
-		float mj2 = _minJumpSize * _minJumpSize;
-		std::vector<glm::vec3> temp;
-		for( int i = 0; i < _stitches.size() - 1; i++ )
+		if( _useMinJumpFactor )
 		{
-			auto d = _stitches[i] - _stitches[i + 1];
-			if( d.x * d.x + d.y * d.y > mj2 )
-				temp.push_back( _stitches[i] );
+			//TODO: fix this, it seems like this does not get along with FSR and TexYZ generators
+			//for all stitches that are too close remove the earlier one
+			// minimum jump size is 25% of targeted jump size
+			float mj2 = pow( _jumpSize * _minJumpFactor, 2.0f );
+			std::vector<glm::vec3> temp;
+			for( int i = 0; i < _stitches.size() - 1; i++ )
+			{
+				auto d2 = _stitches[i] - _stitches[i + 1];
+				if( d2.x * d2.x + d2.y * d2.y > mj2 )
+					temp.push_back( _stitches[i] );
+			}
+			temp.push_back( _stitches.back() );
+			_stitches = temp;
 		}
-		temp.push_back( _stitches.back() );
-		_stitches = temp;
-		*/
 
 		return true;
 	}
 
-	bool Trace::rebuild( float jumpSize, float minJumpSize )
+	bool Trace::rebuild( float jumpSize, bool useMinJumpFactor, float minJumpFactor )
 	{
 		_jumpSize = jumpSize;
-		//_minJumpSize = minJumpSize < 0.00000001 ? jumpSize * MIN_JUMP_FACTOR : minJumpSize;
+		_useMinJumpFactor = useMinJumpFactor;
+		_minJumpFactor = minJumpFactor;
 
 		if( !resample() )
 			return false;
@@ -142,7 +142,7 @@ namespace TextileUX
 		if( !_stitches.size() )
 			return true;
 
-		float minDist = ( _jumpSize * MIN_JUMP_FACTOR );
+		float minDist = ( _jumpSize * 0.1f );
 		float minDist2 = minDist * minDist;
 
 		for( int i = 0; i < _stitches.size() - 1; i++ )
@@ -246,8 +246,13 @@ namespace TextileUX
 	{
 		if( ImGui::SliderFloat( "jump size", &_jumpSize, 0.1f, 30.0f ) )
 			_invalidated = true;
-		//if( ImGui::SliderFloat( "min jump size", &_minJumpSize, 0.0f, 1.0f ) )
-		//	_invalidated = true;
+		if( ImGui::Checkbox( "min jump size", &_useMinJumpFactor ) )
+			_invalidated = true;
+		{
+			ScopedImGuiDisable disable( !_useMinJumpFactor );
+			if( ImGui::SliderFloat( "factor", &_minJumpFactor, 0.0f, 0.1f ) )
+				_invalidated = true;
+		}
 		if( ImGui::SliderFloat( "trace dist", &_dist, 0.1, 10.0f ) )
 			_invalidated = true;
 
@@ -290,7 +295,7 @@ namespace TextileUX
 		if( !params )
 			return false;
 
-		if( !_trace.rebuild( params->_jumpSize, params->_minJumpSize ) )
+		if( !_trace.rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor ) )
 			return false;
 
 		updateSizeString();
