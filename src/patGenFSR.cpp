@@ -51,8 +51,6 @@
 #include <imgui/imgui_impl_freeglut.h>
 #include <imgui/imgui_impl_opengl2.h>
 
-#include <nlohmann/json.hpp>
-
 #include <glm/gtc/type_ptr.hpp>
 
 using namespace TextileUX;

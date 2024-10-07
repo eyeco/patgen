@@ -27,7 +27,7 @@ _TODO:_ general project description
 
 ## Todo:
 
-- implement Inch unit
+- implement Inch unit for SVG export
 - removed Shared Items Project and put shared code into static library
 - remove ImGui from source folder, compile into static library
 - port to gcc ad provide CMake files
