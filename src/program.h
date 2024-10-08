@@ -16,7 +16,7 @@
 #include <map>
 #include <vector>
 
-namespace TextileUX
+namespace patgen
 {
 	class Shader;
 

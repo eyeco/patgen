@@ -14,7 +14,7 @@
 #include <vector>
 #include <vertexBuffer.h>
 
-namespace TextileUX
+namespace patgen
 {
 	class Trace
 	{

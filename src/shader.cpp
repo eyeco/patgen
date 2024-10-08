@@ -13,7 +13,7 @@
 
 #include <iostream>
 
-namespace TextileUX
+namespace patgen
 {
 	Shader::Shader( const std::string &name, GLenum type ) :
 		_name( name ),

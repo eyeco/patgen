@@ -17,7 +17,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-namespace TextileUX
+namespace patgen
 {
 	bool TiledPatternParams::drawUI()
 	{

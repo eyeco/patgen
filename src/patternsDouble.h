@@ -13,7 +13,7 @@
 
 #include <pattern.h>
 
-namespace TextileUX
+namespace patgen
 {
 	class DoublePattern : public Pattern
 	{

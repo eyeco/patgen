@@ -13,7 +13,7 @@
 
 #include <patternsDouble.h>
 
-namespace TextileUX
+namespace patgen
 {
 	class TiledPatternParams : public PatternParamsBase
 	{

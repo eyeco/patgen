@@ -18,7 +18,7 @@
 
 #define CONNECTOR_LENGTH	0.01f
 
-namespace TextileUX
+namespace patgen
 {
 	bool BoustrophedonCircle::PatternParams::drawUI()
 	{

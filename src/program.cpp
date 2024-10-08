@@ -15,7 +15,7 @@
 
 #include <iostream>
 
-namespace TextileUX
+namespace patgen
 {
 	Program::Program( const std::string &name, Shader *vertShader, Shader *fragShader ) :
 		_name( name ),

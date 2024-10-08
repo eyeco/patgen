@@ -53,7 +53,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-using namespace TextileUX;
+using namespace patgen;
 
 #define KEY_RETURN	13
 #define KEY_DC1		17

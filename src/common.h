@@ -65,7 +65,7 @@ namespace ImGui
 		ImVec2 graph_size = ImVec2( 0, 0 ) );
 }
 
-namespace TextileUX
+namespace patgen
 {
 	enum Unit
 	{
@@ -119,13 +119,13 @@ namespace TextileUX
 	template<typename T>
 	inline T clamp( T value, T minValue, T maxValue )
 	{
-		return TextileUX::min( TextileUX::max( value, minValue ), maxValue );
+		return patgen::min( patgen::max( value, minValue ), maxValue );
 	}
 
 	template<typename T>
 	inline T clamp01( T value )
 	{
-		return TextileUX::min( TextileUX::max( value, (T)0 ), (T)1 );
+		return patgen::min( patgen::max( value, (T)0 ), (T)1 );
 	}
 
 	inline const glm::vec3 &zero()

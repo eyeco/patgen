@@ -213,7 +213,7 @@ namespace ImGui
 } // namespace ImGui
 
 
-namespace TextileUX
+namespace patgen
 {
 	const char *unitToString( Unit unit )
 	{

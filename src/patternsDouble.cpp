@@ -48,7 +48,7 @@ void d2xy( int n, int d, int* x, int* y )
 }
 //-----------------------
 
-namespace TextileUX
+namespace patgen
 {
 	glm::vec4 DoublePattern::Color2 = glm::vec4( 0, 1, 1, 1 );
 

@@ -15,7 +15,7 @@
 
 #include <iostream>
 
-namespace TextileUX
+namespace patgen
 {
 	VertexBuffer::VertexBuffer( const std::string &name ) :
 		_name( name ),

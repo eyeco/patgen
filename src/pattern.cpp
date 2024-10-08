@@ -16,7 +16,7 @@
 #include <sstream>
 #include <iostream>
 
-namespace TextileUX
+namespace patgen
 {
 	Trace::Trace( const glm::vec4 &color ) :
 		_color( color ),

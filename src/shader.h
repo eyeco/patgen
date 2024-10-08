@@ -13,7 +13,7 @@
 
 #include <common.h>
 
-namespace TextileUX
+namespace patgen
 {
 	class Shader
 	{

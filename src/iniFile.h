@@ -18,7 +18,7 @@
 #include <sstream>
 #include <fstream>
 
-namespace TextileUX
+namespace patgen
 {
 	class IniFile
 	{

@@ -13,7 +13,7 @@
 
 #include <glm/gtx/transform.hpp>
 
-namespace TextileUX
+namespace patgen
 {
 	Trackball::Trackball() :
 		_first( true ),

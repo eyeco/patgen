@@ -15,7 +15,7 @@
 
 #include <glm/glm.hpp>
 
-namespace TextileUX
+namespace patgen
 {
 	class Program;
 

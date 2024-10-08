@@ -18,7 +18,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-namespace TextileUX
+namespace patgen
 {
 	void IniFile::Section::write( std::fstream &file )
 	{
