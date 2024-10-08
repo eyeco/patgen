@@ -23,7 +23,7 @@ _TODO:_ general project description
 - freeglut (v3.0.0) [[Github link]](https://github.com/freeglut/freeglut/releases/tag/v3.0.0)
 - glew (v2.1.0) [[Github link]](https://github.com/nigels-com/glew/releases/tag/glew-2.1.0) OpenGL extension wrangler library
 - glm (v0.9.9.3) [[Github link]](https://github.com/g-truc/glm/releases/tag/0.9.9.3) OpenGL Mathematics header library
-- DearImGui (v1.68) GUI library is for now included [direclty](./src/imgui/) in the source-code and built along the project (as [suggested](https://github.com/ocornut/imgui/wiki/Getting-Started#compilinglinking) in the ImGui Wiki). [[Github link]](https://github.com/ocornut/imgui/releases/tag/v1.68)
+- DearImGui (v1.68) GUI library is for now included [directly](./src/imgui/) in the source-code and built along the project (as [suggested](https://github.com/ocornut/imgui/wiki/Getting-Started#compilinglinking) in the ImGui Wiki). [[Github link]](https://github.com/ocornut/imgui/releases/tag/v1.68)
 
 ## Todo:
 
