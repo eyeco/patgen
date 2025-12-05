@@ -55,7 +55,7 @@ namespace patgen
 		float _dist;
 		float _innerDiameter;
 
-		float _innerJumpSize;
+		float _innerStitchLength;
 
 		glm::vec3 _first;
 		glm::vec3 _last;
@@ -70,13 +70,13 @@ namespace patgen
 		public:
 			float _diameter;
 			float _innerDiameter;
-			float _innerJumpSize;
+			float _innerStitchLength;
 
 			PatternParams() :
 				PatternParamsBase(),
 				_diameter( 10 ),
 				_innerDiameter( 0 ),
-				_innerJumpSize( 0.1f )
+				_innerStitchLength( 0.1f )
 			{}
 
 			virtual bool drawUI();
@@ -173,7 +173,7 @@ namespace patgen
 				_width( 10 ),
 				_jumpMult( 1 )
 			{
-				_jumpSize = _dist * _jumpMult;
+				_stitchLength = _dist * _jumpMult;
 			}
 
 			virtual bool drawUI();

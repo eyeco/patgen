@@ -2,7 +2,7 @@
 * Copyright (C) 2024 eyeco https://github.com/eyeco https://www.rolandaigner.com
 * This file is part of patgen
 *
-* Licensed under the GPL3 License. See LICENSE file in the package root for license information.
+* Licensed under the GPL3 License. See LICENSE file in the repository root for license information.
 *
 * You should have received a copy of the GNU General Public License
 * along with this code. If not, see < http://www.gnu.org/licenses/>.
@@ -20,7 +20,7 @@ namespace patgen
 {
 	Trace::Trace( const glm::vec4 &color ) :
 		_color( color ),
-		_jumpSize( 0 ),
+		_stitchLength( 0 ),
 		_useMinJumpFactor( false ),
 		_minJumpFactor( 0 ),
 		_runLength( 0.0f ),
@@ -32,7 +32,7 @@ namespace patgen
 		_color( t._color ),
 		_verts( t._verts ),
 		_stitches( t._stitches ),
-		_jumpSize( t._jumpSize ),
+		_stitchLength( t._stitchLength ),
 		_minJumpFactor( t._minJumpFactor ),
 		_runLength( t._runLength ),
 		_vbPath( "path" ),
@@ -54,7 +54,7 @@ namespace patgen
 
 	bool Trace::resample()
 	{
-		if( !_verts.size() || _jumpSize < Pattern::Epsilon )
+		if( !_verts.size() || _stitchLength < Pattern::Epsilon )
 			return false;
 
 		_stitches.clear();
@@ -69,15 +69,15 @@ namespace patgen
 				glm::vec3 d = _verts[i + 1] - v;
 				float l = glm::length( d );
 
-				glm::vec3 jump = glm::normalize( d ) * _jumpSize;
+				glm::vec3 jump = glm::normalize( d ) * _stitchLength;
 				
-				l -= _jumpSize;
+				l -= _stitchLength;
 				while( l > Pattern::Epsilon )
 				{
 					v += jump;
 					_stitches.push_back( v );
 
-					l -= _jumpSize;
+					l -= _stitchLength;
 				}
 			}
 
@@ -90,8 +90,8 @@ namespace patgen
 		{
 			//TODO: fix this, it seems like this does not get along with FSR and TexYZ generators
 			//for all stitches that are too close remove the earlier one
-			// minimum jump size is 25% of targeted jump size
-			float mj2 = pow( _jumpSize * _minJumpFactor, 2.0f );
+			// minimum stitch length is 25% of targeted stitch length
+			float mj2 = pow( _stitchLength * _minJumpFactor, 2.0f );
 			std::vector<glm::vec3> temp;
 			for( int i = 0; i < _stitches.size() - 1; i++ )
 			{
@@ -106,9 +106,9 @@ namespace patgen
 		return true;
 	}
 
-	bool Trace::rebuild( float jumpSize, bool useMinJumpFactor, float minJumpFactor )
+	bool Trace::rebuild( float stitchLength, bool useMinJumpFactor, float minJumpFactor )
 	{
-		_jumpSize = jumpSize;
+		_stitchLength = stitchLength;
 		_useMinJumpFactor = useMinJumpFactor;
 		_minJumpFactor = minJumpFactor;
 
@@ -142,7 +142,7 @@ namespace patgen
 		if( !_stitches.size() )
 			return true;
 
-		float minDist = ( _jumpSize * 0.1f );
+		float minDist = ( _stitchLength * 0.1f );
 		float minDist2 = minDist * minDist;
 
 		for( int i = 0; i < _stitches.size() - 1; i++ )
@@ -244,9 +244,9 @@ namespace patgen
 
 	bool PatternParamsBase::drawUI()
 	{
-		if( ImGui::SliderFloat( "jump size", &_jumpSize, 0.1f, 30.0f ) )
+		if( ImGui::SliderFloat( "stitch length", &_stitchLength, 0.1f, 30.0f ) )
 			_invalidated = true;
-		if( ImGui::Checkbox( "min jump size", &_useMinJumpFactor ) )
+		if( ImGui::Checkbox( "min stitch length", &_useMinJumpFactor ) )
 			_invalidated = true;
 		{
 			ScopedImGuiDisable disable( !_useMinJumpFactor );
@@ -295,7 +295,7 @@ namespace patgen
 		if( !params )
 			return false;
 
-		if( !_trace.rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor ) )
+		if( !_trace.rebuild( params->_stitchLength, params->_useMinJumpFactor, params->_minJumpFactor ) )
 			return false;
 
 		updateSizeString();

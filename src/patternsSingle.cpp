@@ -2,7 +2,7 @@
 * Copyright (C) 2024 eyeco https://github.com/eyeco https://www.rolandaigner.com
 * This file is part of patgen
 *
-* Licensed under the GPL3 License. See LICENSE file in the package root for license information.
+* Licensed under the GPL3 License. See LICENSE file in the repository root for license information.
 *
 * You should have received a copy of the GNU General Public License
 * along with this code. If not, see < http://www.gnu.org/licenses/>.
@@ -67,7 +67,7 @@ namespace patgen
 		std::list<glm::vec3> temp;
 
 		float r = _diameter / 2.0f;
-		float jump = p->_jumpSize;
+		float jump = p->_stitchLength;
 
 		float s = 0;
 		int dir = 1;
@@ -139,7 +139,7 @@ namespace patgen
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-D%.03f-d%.03f-j%.03f", getName().c_str(), _diameter, _dist, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-D%.03f-d%.03f-j%.03f", getName().c_str(), _diameter, _dist, _trace.getStitchLength() );
 
 		return std::string( tempStr );
 	}
@@ -154,13 +154,13 @@ namespace patgen
 			_invalidated = true;
 		if( ImGui::SliderFloat( "inner diameter", &_innerDiameter, 0.0f, 50.0f ) )
 			_invalidated = true;
-		if( ImGui::SliderFloat( "inner jump size", &_innerJumpSize, 0.1f, 100.0f ) )
+		if( ImGui::SliderFloat( "inner stitch length", &_innerStitchLength, 0.1f, 100.0f ) )
 			_invalidated = true;
 
 		if( _innerDiameter > _diameter )
 			_innerDiameter = _diameter;
-		if( _innerJumpSize > _jumpSize )
-			_innerJumpSize = _jumpSize;
+		if( _innerStitchLength > _stitchLength )
+			_innerStitchLength = _stitchLength;
 
 		return PatternParamsBase::drawUI();
 	}
@@ -170,7 +170,7 @@ namespace patgen
 		_diameter( 0.0f ),
 		_dist( 0.0f ),
 		_innerDiameter( 0.0f ),
-		_innerJumpSize( 0.0f ),
+		_innerStitchLength( 0.0f ),
 		_first( 0 ),
 		_last( 0 )
 	{}
@@ -207,7 +207,7 @@ namespace patgen
 		_diameter = p->_diameter;
 		_dist = p->_dist;
 		_innerDiameter = p->_innerDiameter;
-		_innerJumpSize = p->_innerJumpSize;
+		_innerStitchLength = p->_innerStitchLength;
 
 		if( _innerDiameter > _diameter )
 			return false;
@@ -218,8 +218,8 @@ namespace patgen
 
 		float r0 = _diameter / 2.0f;
 		float r1 = _innerDiameter / 2.0f;
-		float j0 = p->_jumpSize;
-		float j1 = _innerJumpSize;
+		float j0 = p->_stitchLength;
+		float j1 = _innerStitchLength;
 		float jump = 0;
 
 		float a = 0;
@@ -238,7 +238,7 @@ namespace patgen
 			float d = hypot( x, y );
 
 			float p = ( r - r1 ) / ( r0 - r1 );	//progress [0 1], moving from outer to inner radius
-			jump = j1 * ( 1 - p ) + j0 * p;		//linear interpolation of jump size based on progress
+			jump = j1 * ( 1 - p ) + j0 * p;		//linear interpolation of stitch length based on progress
 
 			// approximate increment angle alpha for wanted segment length s with circle equation
 			float b = 2.0f * asin( jump / ( 2.0f * d ) );
@@ -272,7 +272,7 @@ namespace patgen
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-D%.03f-ID%.03f-d%.03f-j[%.03f-i%.03f]", getName().c_str(), _diameter, _innerDiameter, _dist, _trace.getJumpSize(), _innerJumpSize );
+		sprintf( tempStr, "%s-D%.03f-ID%.03f-d%.03f-j[%.03f-i%.03f]", getName().c_str(), _diameter, _innerDiameter, _dist, _trace.getStitchLength(), _innerStitchLength );
 
 		return std::string( tempStr );
 	}
@@ -362,7 +362,7 @@ namespace patgen
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-W%.03f-d%.03f-j%.03f", getName().c_str(), _width, _dist, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-W%.03f-d%.03f-j%.03f", getName().c_str(), _width, _dist, _trace.getStitchLength() );
 
 		return std::string( tempStr );
 	}
@@ -454,7 +454,7 @@ namespace patgen
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-W%.03f-d%.03f-j%.03f", getName().c_str(), _width, _dist, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-W%.03f-d%.03f-j%.03f", getName().c_str(), _width, _dist, _trace.getStitchLength() );
 
 		return std::string( tempStr );
 	}
@@ -471,7 +471,7 @@ namespace patgen
 		if( ImGui::SliderInt( "jump multiplier", &_jumpMult, 1, 10 ) )
 		{
 			_invalidated = true;
-			_jumpSize = _jumpMult * _dist;
+			_stitchLength = _jumpMult * _dist;
 		}
 
 		return PatternParamsBase::drawUI();
@@ -566,7 +566,7 @@ namespace patgen
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-W%.03f-d%.03f-j%.03f", getName().c_str(), _width, _dist, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-W%.03f-d%.03f-j%.03f", getName().c_str(), _width, _dist, _trace.getStitchLength() );
 
 		return std::string( tempStr );
 	}

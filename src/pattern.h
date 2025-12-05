@@ -2,7 +2,7 @@
 * Copyright (C) 2024 eyeco https://github.com/eyeco https://www.rolandaigner.com
 * This file is part of patgen
 *
-* Licensed under the GPL3 License. See LICENSE file in the package root for license information.
+* Licensed under the GPL3 License. See LICENSE file in the repository root for license information.
 *
 * You should have received a copy of the GNU General Public License
 * along with this code. If not, see < http://www.gnu.org/licenses/>.
@@ -22,9 +22,9 @@ namespace patgen
 		glm::vec4 _color;
 
 		std::vector<glm::vec3> _verts;		//minimum required stitches (i.e. trail edges)
-		std::vector<glm::vec3> _stitches;	//actual stitches, resulting from resampling, e.g. due to maximum jump size supported by machine
+		std::vector<glm::vec3> _stitches;	//actual stitches, resulting from resampling, e.g. due to maximum stitch length supported by machine
 
-		float _jumpSize;
+		float _stitchLength;
 
 		bool _useMinJumpFactor;
 		float _minJumpFactor;
@@ -46,9 +46,9 @@ namespace patgen
 		bool validate();
 
 		void clear();
-		bool rebuild( float jumpSize, bool useMinJumpFactor, float minJumpFactor );
+		bool rebuild( float stitchLength, bool useMinJumpFactor, float minJumpFactor );
 
-		float getJumpSize() const { return _jumpSize; }
+		float getStitchLength() const { return _stitchLength; }
 
 		float getRunLength() const { return _runLength; }
 		size_t getVertexCount() const { return _verts.size(); }
@@ -77,7 +77,7 @@ namespace patgen
 		bool _invalidated;
 
 	public:
-		float _jumpSize;
+		float _stitchLength;
 
 		bool _useMinJumpFactor;
 		float _minJumpFactor;
@@ -86,7 +86,7 @@ namespace patgen
 
 		PatternParamsBase() :
 			_invalidated( false ),
-			_jumpSize( 1 ),
+			_stitchLength( 1 ),
 			_useMinJumpFactor( false ),
 			_minJumpFactor( 0 ),
 			_dist( 1 )

@@ -2,7 +2,7 @@
 * Copyright (C) 2024 eyeco https://github.com/eyeco https://www.rolandaigner.com
 * This file is part of patgen
 *
-* Licensed under the GPL3 License. See LICENSE file in the package root for license information.
+* Licensed under the GPL3 License. See LICENSE file in the repository root for license information.
 *
 * You should have received a copy of the GNU General Public License
 * along with this code. If not, see < http://www.gnu.org/licenses/>.
@@ -373,10 +373,11 @@ namespace patgen
 		x0 = -( _tilesY - 1 ) * cellDiagonal * 0.5f;
 		y0 = ( _tilesX - 1 ) * cellDiagonal * 0.5f + cellDiagonal;
 
+		//rotate AND REFLECT VERTICALLY, so there is actual coupling length between cells, with the turning parts facing each other
 		_trace2.insertBack( glm::vec3( -y0, x0, 0 ) );
 		for( int i = 0; i <= _tilesX; i++ )
 			for( auto& p : temp )
-				_trace2.insertBack( glm::vec3( -y0 + i * cellDiagonal, x0, 0 ) + glm::vec3( -p.y, p.x, 0 ) );
+				_trace2.insertBack( glm::vec3( -y0 + i * cellDiagonal, x0, 0 ) + glm::vec3( -p.y, -p.x, 0 ) );
 		_trace2.insertBack( glm::vec3( -y0 + ( _tilesX + 1 ) * cellDiagonal, x0, 0 ) );
 
 		if( !DoublePattern::build( params ) )
@@ -386,7 +387,7 @@ namespace patgen
 		{
 			Trace *t = new Trace( _trace );
 			t->translate( glm::vec3( i * cellDiagonal, 0, 0 ) );
-			t->rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor );
+			t->rebuild( params->_stitchLength, params->_useMinJumpFactor, params->_minJumpFactor );
 
 			_traces.push_back( t );
 		}
@@ -394,7 +395,7 @@ namespace patgen
 		{
 			Trace *t = new Trace( _trace2 );
 			t->translate( glm::vec3( 0, i * cellDiagonal, 0 ) );
-			t->rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor );
+			t->rebuild( params->_stitchLength, params->_useMinJumpFactor, params->_minJumpFactor );
 
 			_traces2.push_back( t );
 		}
@@ -406,7 +407,7 @@ namespace patgen
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-%dx%d-W%d-d%.03f-cd%.03f-j%.03f", getName().c_str(), _tilesX, _tilesY, _windings, _dist, _cellDist, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-%dx%d-W%d-d%.03f-cd%.03f-j%.03f", getName().c_str(), _tilesX, _tilesY, _windings, _dist, _cellDist, _trace.getStitchLength() );
 
 		return std::string( tempStr );
 	}
@@ -510,7 +511,7 @@ namespace patgen
 		{
 			Trace* t = new Trace( _trace );
 			t->translate( glm::vec3( i * cellDiagonal, 0, 0 ) );
-			t->rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor );
+			t->rebuild( params->_stitchLength, params->_useMinJumpFactor, params->_minJumpFactor );
 
 			_traces.push_back( t );
 		}
@@ -518,7 +519,7 @@ namespace patgen
 		{
 			Trace* t = new Trace( _trace2 );
 			t->translate( glm::vec3( 0, i * cellDiagonal, 0 ) );
-			t->rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor );
+			t->rebuild( params->_stitchLength, params->_useMinJumpFactor, params->_minJumpFactor );
 
 			_traces2.push_back( t );
 		}
@@ -530,7 +531,7 @@ namespace patgen
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-%dx%d-T%d-d%.03f-cd%.03f-j%.03f", getName().c_str(), _tilesX, _tilesY, _turns, _dist, _cellDist, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-%dx%d-T%d-d%.03f-cd%.03f-j%.03f", getName().c_str(), _tilesX, _tilesY, _turns, _dist, _cellDist, _trace.getStitchLength() );
 
 		return std::string( tempStr );
 	}
@@ -661,7 +662,7 @@ namespace patgen
 		{
 			Trace* t = new Trace( _trace );
 			t->translate( glm::vec3( i * ( w - 2 * _dist ), 0, 0 ) );
-			t->rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor );
+			t->rebuild( params->_stitchLength, params->_useMinJumpFactor, params->_minJumpFactor );
 
 			_traces.push_back( t );
 		}
@@ -669,7 +670,7 @@ namespace patgen
 		{
 			Trace* t = new Trace( _trace2 );
 			t->translate( glm::vec3( 0, -i * ( w - 2 * _dist ), 0 ) );
-			t->rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor );
+			t->rebuild( params->_stitchLength, params->_useMinJumpFactor, params->_minJumpFactor );
 
 			_traces2.push_back( t );
 		}
@@ -681,7 +682,7 @@ namespace patgen
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-%dx%d-T%d-d%.03f-j%.03f", getName().c_str(), _tilesX, _tilesY, _turns, _dist, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-%dx%d-T%d-d%.03f-j%.03f", getName().c_str(), _tilesX, _tilesY, _turns, _dist, _trace.getStitchLength() );
 
 		return std::string( tempStr );
 	}
@@ -846,7 +847,7 @@ namespace patgen
 		{
 			Trace* t = new Trace( _trace );
 			t->translate( glm::vec3( i * tileSize, 0, 0 ) );
-			t->rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor );
+			t->rebuild( params->_stitchLength, params->_useMinJumpFactor, params->_minJumpFactor );
 
 			_traces.push_back( t );
 		}
@@ -854,7 +855,7 @@ namespace patgen
 		{
 			Trace* t = new Trace( _trace2 );
 			t->translate( glm::vec3( 0, -i * tileSize, 0 ) );
-			t->rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor );
+			t->rebuild( params->_stitchLength, params->_useMinJumpFactor, params->_minJumpFactor );
 
 			_traces2.push_back( t );
 		}
@@ -866,7 +867,7 @@ namespace patgen
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-%dx%d-O%d-d%.03f-cd%.03f-j%.03f", getName().c_str(), _tilesX, _tilesY, _order, _dist, _cellDist, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-%dx%d-O%d-d%.03f-cd%.03f-j%.03f", getName().c_str(), _tilesX, _tilesY, _order, _dist, _cellDist, _trace.getStitchLength() );
 
 		return std::string( tempStr );
 	}
@@ -1055,7 +1056,7 @@ namespace patgen
 		{
 			Trace* t = new Trace( _trace );
 			t->translate( glm::vec3( i * tileSize, 0, 0 ) );
-			t->rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor );
+			t->rebuild( params->_stitchLength, params->_useMinJumpFactor, params->_minJumpFactor );
 
 			_traces.push_back( t );
 		}
@@ -1063,7 +1064,7 @@ namespace patgen
 		{
 			Trace* t = new Trace( _trace2 );
 			t->translate( glm::vec3( 0, -i * tileSize, 0 ) );
-			t->rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor );
+			t->rebuild( params->_stitchLength, params->_useMinJumpFactor, params->_minJumpFactor );
 
 			_traces2.push_back( t );
 		}
@@ -1075,7 +1076,7 @@ namespace patgen
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-%dx%d-T%d-d%.03f-cd%.03f-j%.03f", getName().c_str(), _tilesX, _tilesY, _turns, _dist, _cellDist, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-%dx%d-T%d-d%.03f-cd%.03f-j%.03f", getName().c_str(), _tilesX, _tilesY, _turns, _dist, _cellDist, _trace.getStitchLength() );
 
 		return std::string( tempStr );
 	}

@@ -2,7 +2,7 @@
 * Copyright (C) 2024 eyeco https://github.com/eyeco https://www.rolandaigner.com
 * This file is part of patgen
 *
-* Licensed under the GPL3 License. See LICENSE file in the package root for license information.
+* Licensed under the GPL3 License. See LICENSE file in the repository root for license information.
 *
 * You should have received a copy of the GNU General Public License
 * along with this code. If not, see < http://www.gnu.org/licenses/>.
@@ -631,23 +631,22 @@ void display()
 			}
 
 			if( ImGui::BeginMenu( "Scale" ) )
-				if( ImGui::BeginMenu( "Scale" ) )
+			{
+				for( int i = 0; i < (int) U_COUNT; i++ )
 				{
-					for( int i = 0; i < (int) U_COUNT; i++ )
+					if( i == U_IN )
+						continue;	//TODO: implement inch in save() methods of patterns
+
+					if( ImGui::RadioButton( unitToString( (Unit) i ), ( unit == i ) ) )
 					{
-						if( i == U_IN )
-							continue;	//TODO: implement inch in save() methods of patterns
-
-						if( ImGui::RadioButton( unitToString( (Unit) i ), ( unit == i ) ) )
-						{
-							unit = (Unit) i;
-							if( pattern )
-								pattern->setUnit( unit );
-						}
+						unit = (Unit) i;
+						if( pattern )
+							pattern->setUnit( unit );
 					}
-
-					ImGui::EndMenu();
 				}
+
+				ImGui::EndMenu();
+			}
 
 			if( ImGui::BeginMenu( "View" ) )
 			{

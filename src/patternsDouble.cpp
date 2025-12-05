@@ -2,7 +2,7 @@
 * Copyright (C) 2024 eyeco https://github.com/eyeco https://www.rolandaigner.com
 * This file is part of patgen
 *
-* Licensed under the GPL3 License. See LICENSE file in the package root for license information.
+* Licensed under the GPL3 License. See LICENSE file in the repository root for license information.
 *
 * You should have received a copy of the GNU General Public License
 * along with this code. If not, see < http://www.gnu.org/licenses/>.
@@ -159,7 +159,7 @@ namespace patgen
 		if( !params )
 			return false;
 
-		if( !_trace2.rebuild( params->_jumpSize, params->_useMinJumpFactor, params->_minJumpFactor ) )
+		if( !_trace2.rebuild( params->_stitchLength, params->_useMinJumpFactor, params->_minJumpFactor ) )
 			return false;
 
 		if( !Pattern::build( params ) )
@@ -405,7 +405,7 @@ namespace patgen
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-T%d-d%.03f-j%.03f", getName().c_str(), _teeth, _dist, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-T%d-d%.03f-j%.03f", getName().c_str(), _teeth, _dist, _trace.getStitchLength() );
 
 		return std::string( tempStr );
 	}
@@ -479,7 +479,7 @@ namespace patgen
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-W%d-d%.03f-j%.03f", getName().c_str(), _windings, _dist, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-W%d-d%.03f-j%.03f", getName().c_str(), _windings, _dist, _trace.getStitchLength() );
 
 		return std::string( tempStr );
 	}
@@ -595,7 +595,7 @@ namespace patgen
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-T%d-d%.03f-j%.03f", getName().c_str(), _turns, _dist, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-T%d-d%.03f-j%.03f", getName().c_str(), _turns, _dist, _trace.getStitchLength() );
 
 		return std::string( tempStr );
 	}
@@ -689,7 +689,7 @@ namespace patgen
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-T%d-d%.03f-j%.03f", getName().c_str(), _turns, _dist, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-T%d-d%.03f-j%.03f", getName().c_str(), _turns, _dist, _trace.getStitchLength() );
 
 		return std::string( tempStr );
 	}
@@ -846,7 +846,7 @@ namespace patgen
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-O%d-d%.03f-j%.03f", getName().c_str(), _order, _dist, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-O%d-d%.03f-j%.03f", getName().c_str(), _order, _dist, _trace.getStitchLength() );
 
 		return std::string( tempStr );
 	}
@@ -1021,7 +1021,7 @@ namespace patgen
 	{
 		char tempStr[128];
 
-		sprintf( tempStr, "%s-O%d-d%.03f-j%.03f", getName().c_str(), _order, _dist, _trace.getJumpSize() );
+		sprintf( tempStr, "%s-O%d-d%.03f-j%.03f", getName().c_str(), _order, _dist, _trace.getStitchLength() );
 
 		return std::string( tempStr );
 	}
