@@ -18,6 +18,8 @@ Pattern generator for embroidered capacitive multitouch of enameled wires (see r
 
 _TODO:_ general project description
 
+Pattern generator for embroidered touch elements with active shields using enameled wires (see related [IEEE JFLEX 04/2025 article](https://doi.org/10.1109/JFLEX.2025.3571382) "Embroidered Driven Shields for Robust Textile Touch Interfaces" by Aigner et al.)
+
 ## Dependencies
 
 - freeglut (v3.0.0) [[Github link]](https://github.com/freeglut/freeglut/releases/tag/v3.0.0)
